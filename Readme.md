@@ -1,7 +1,7 @@
 # Личный проект «Шесть городов»
 
 * Студент: [Арина Коваленко](https://up.htmlacademy.ru/nodejs-api/5/user/1069875).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Сушко](https://htmlacademy.ru/profile/sashasushko).
 
 ---
 
