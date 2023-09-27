@@ -4,7 +4,7 @@ import { GoodType } from './good-type.enum.js';
 import { Location } from './location.type.js';
 import { Host } from './user.type.js';
 
-export type OfferT = {
+export type Offer = {
   title: string;
   description: string;
   date: Date;
