@@ -9,7 +9,7 @@ export class CommandParser {
       if (argument.startsWith('--')) {
         parsedCommand[argument] = [];
         currentCommand = argument;
-      } else {
+      } else if (currentCommand && argument) {
         parsedCommand[currentCommand].push(argument);
       }
     }
