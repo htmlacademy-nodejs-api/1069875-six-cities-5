@@ -4,6 +4,7 @@ import { MockServerData } from '../../shared/types/index.js';
 import { Command } from './command.interface.js';
 import { getErrorMessage } from '../../shared/helpers/index.js';
 import got from 'got';
+import chalk from 'chalk';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -12,7 +13,7 @@ export class GenerateCommand implements Command {
     try {
       this.initialData = await got.get(url).json();
     } catch {
-      throw new Error(`Can't load data from ${url}`);
+      throw new Error(chalk.red(`Can't load data from ${url}`));
     }
   }
 
@@ -36,10 +37,10 @@ export class GenerateCommand implements Command {
     try {
       await this.load(url);
       this.write(filepath, offerCount);
-      console.info(`File ${filepath} was created!`);
+      console.info(chalk.magenta(`File ${filepath} was created!`));
     } catch (error: unknown) {
-      console.error('Can\'t generate data');
-      console.error(getErrorMessage(error));
+      console.error(chalk.red('Can\'t generate data'));
+      console.error(chalk.red(getErrorMessage(error)));
     }
   }
 }

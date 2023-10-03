@@ -10,7 +10,7 @@ export class ImportCommand implements Command {
   }
 
   private onCompletedImport(count: number) {
-    console.info(`${count} rows imported.`);
+    console.info(chalk.magenta(`${count} rows imported.`));
   }
 
   public getName(): string {
