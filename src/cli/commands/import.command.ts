@@ -1,7 +1,6 @@
-import { createOffer } from '../../shared/helpers/offer.js';
+import { createOffer, getErrorMessage } from '../../shared/helpers/index.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { Command } from './command.interface.js';
-import { getErrorMessage } from '../../shared/helpers/index.js';
 import chalk from 'chalk';
 
 export class ImportCommand implements Command {

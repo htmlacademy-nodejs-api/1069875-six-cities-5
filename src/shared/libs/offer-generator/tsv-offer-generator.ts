@@ -1,17 +1,17 @@
-import { MockServerData } from '../../types/mock-server-data.type.js';
+import { MockServerData } from '../../types/index.js';
 import { OfferGenerator } from './offer-generator.interface.js';
 import {
   generateRandomValue,
   getRandomItem,
   getRandomItems,
-} from '../../helpers/common.js';
+} from '../../helpers/index.js';
 import dayjs from 'dayjs';
 import {
   GuestsNumber,
   PriceValue,
   RatingValue,
   RoomsNumber,
-} from '../../const/offer.js';
+} from '../../const/index.js';
 
 enum DateDiffNumber {
   Min = 1,
