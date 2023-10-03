@@ -2,6 +2,7 @@ import { appendFile } from 'node:fs/promises';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/tsv-offer-generator.js';
 import { MockServerData } from '../../shared/types/mock-server-data.type.js';
 import { Command } from './command.interface.js';
+import { getErrorMessage } from '../../shared/helpers/index.js';
 import got from 'got';
 
 export class GenerateCommand implements Command {
@@ -41,10 +42,7 @@ export class GenerateCommand implements Command {
       console.info(`File ${filepath} was created!`);
     } catch (error: unknown) {
       console.error('Can\'t generate data');
-
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
+      console.error(getErrorMessage(error));
     }
   }
 }

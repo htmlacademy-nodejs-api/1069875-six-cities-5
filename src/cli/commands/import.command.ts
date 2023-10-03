@@ -1,6 +1,7 @@
 import { createOffer } from '../../shared/helpers/offer.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { Command } from './command.interface.js';
+import { getErrorMessage } from '../../shared/helpers/index.js';
 import chalk from 'chalk';
 
 export class ImportCommand implements Command {
@@ -27,12 +28,8 @@ export class ImportCommand implements Command {
     try {
       fileReader.read();
     } catch (err) {
-      if (!(err instanceof Error)) {
-        throw err;
-      }
-
       console.error(chalk.red(`Can't import data from file: ${filename}`));
-      console.error(chalk.red(`Details: ${err.message}`));
+      console.error(chalk.red(getErrorMessage(err)));
     }
   }
 }
