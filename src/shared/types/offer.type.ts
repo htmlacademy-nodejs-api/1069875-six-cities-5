@@ -2,7 +2,7 @@ import { City } from './city.enum.js';
 import { OfferType } from './offer-type.enum.js';
 import { GoodType } from './good-type.enum.js';
 import { Location } from './location.type.js';
-import { Host } from './user.type.js';
+import { User } from './user.type.js';
 
 export type Offer = {
   title: string;
@@ -19,7 +19,7 @@ export type Offer = {
   maxGuests: number;
   price: number;
   goods: GoodType[];
-  host: Host;
+  host: User;
   commentsNumber: number;
   location: Location;
 };
