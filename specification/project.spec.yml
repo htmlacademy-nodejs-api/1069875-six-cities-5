@@ -14,3 +14,50 @@ tags:
     description: Действия с пользователями.
   - name: comments
     description: Действия с комментариями.
+
+paths:
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Список предложений
+      description: Возвращает список предложений
+    post:
+      tags:
+        - offers
+      summary: Публикация предложения
+      description: Публикует новое предложения
+  /offers/premium:
+    get:
+      tags:
+        - offers
+      summary: Список премиальных предложений
+      description: Возвращает список премиальных предложений
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Полное предложение
+      description: Возвращает детальную информацию о предложении
+    patch:
+      tags:
+        - offers
+      summary: Обновление предложения
+      description: Обновляет информацию о предложении
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения
+      description: Удаляет предложение
+  /offers/{offerId}/comments:
+    get:
+      tags:
+        - comments
+      summary: Список комментариев
+      description: Возвращает список комментариев для предложения
+    post:
+      tags:
+        - comments
+      summary: Добавление комментария
+      description: Добавляет новый комментарий для предложения
+
