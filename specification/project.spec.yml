@@ -83,3 +83,135 @@ paths:
         - users
       summary: Завершение сеанса пользователя
       description: Выход из закрытой части приложения
+
+components:
+  schemas:
+    offer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Nice house
+        date:
+          type: string
+          example: 2024-01-01T12:00:00.000Z
+        city:
+          $ref: '#/components/schemas/city'
+        previewImage:
+          type: string
+          example: https://url-to-image/image.jpeg
+        isPremium:
+          type: boolean
+          example: false
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          format: float
+          example: 4.5
+        type:
+          type: string
+          example: house
+          enum:
+            - house
+            - room
+            - hotel
+            - apartment
+        price:
+          type: integer
+          format: int32
+          example: 1000
+        commentsNumber:
+          type: integer
+          format: int32
+          example: 12
+    fullOffer:
+      allOf:
+        - $ref: '#/components/schemas/offer'
+        - type: object
+          properties:
+            description:
+              type: string
+              example: Really nice house. Very comfy
+            images:
+              type: array
+              items:
+                type: string
+                example: https://url-to-image/image.jpeg
+            bedrooms:
+              type: integer
+              format: int32
+              example: 3
+            maxGuests:
+              type: integer
+              format: int32
+              example: 4
+            goods:
+              type: array
+              items:
+                type: string
+                example: Breakfast
+                enum:
+                  - Breakfast
+                  - Air conditioning
+                  - Laptop friendly workspace
+                  - Baby seat
+                  - Washer
+                  - Towels
+                  - Fridge
+            location:
+              $ref: '#/components/schemas/location'
+    getOffer:
+      allOf:
+        - $ref: '#/components/schemas/fullOffer'
+        - type: object
+          properties:
+            host:
+              $ref: '#/components/schemas/user'
+    createOffer:
+      allOf:
+        - $ref: '#/components/schemas/fullOffer'
+        - type: object
+          properties:
+            hostId:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
+    location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: 52.12345678901234
+        longitude:
+          type: number
+          format: float
+          example: 4.12345678901234
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tomas
+        email:
+          type: string
+          format: email
+          example: tomas@post.go
+        avatarUrl:
+          type: string
+          example: https://url-to-image/image.jpeg
+        isPro:
+          type: boolean
+          example: false
+    city:
+      type: string
+      example: Paris
+      enum:
+        - Paris
+        - Cologne
+        - Brussels
+        - Amsterdam
+        - Hamburg
+        - Dusseldorf
