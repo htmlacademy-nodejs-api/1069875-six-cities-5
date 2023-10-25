@@ -83,6 +83,26 @@ paths:
         - offers
       summary: Список премиальных предложений
       description: Возвращает список премиальных предложений
+
+      parameters:
+        - name: city
+          description: Город
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/city'
+
+      responses:
+        "200":
+            description: Список премиальных предложений
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/offer'
+
+
   /offers/{offerId}:
     get:
       tags:
