@@ -22,11 +22,61 @@ paths:
         - offers
       summary: Список предложений
       description: Возвращает список предложений
+
+      parameters:
+        - name: count
+          description: Количество возвращаемых предложений
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/offer'
     post:
       tags:
         - offers
       summary: Публикация предложения
       description: Публикует новое предложения
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createOffer'
+
+      responses:
+        "201":
+          description: Новое предложение создано. Объект предложения
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком длинное название
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для создания нового предложения - войдите в систему
+
+
   /offers/premium:
     get:
       tags:
