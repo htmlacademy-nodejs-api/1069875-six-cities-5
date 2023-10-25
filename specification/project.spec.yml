@@ -109,16 +109,114 @@ paths:
         - offers
       summary: Полное предложение
       description: Возвращает детальную информацию о предложении
-    patch:
+
+      responses:
+        "200":
+          description: Полное предложений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
+    put:
       tags:
         - offers
       summary: Обновление предложения
       description: Обновляет информацию о предложении
+
+      requestBody:
+        description: Информация для обновления предложения
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/createOffer'
+                - type: object
+                  properties:
+                    offerId:
+                      type: string
+                      example: 6329c3d6a04ab1061c6425ea
+
+      responses:
+        "200":
+          description: Предложений успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком длинное название
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для редактирования предложения - войдите в систему
+        "403":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный идентификатор пользователя
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
     delete:
       tags:
         - offers
       summary: Удаление предложения
       description: Удаляет предложение
+
+      responses:
+        "200":
+          description: Предложений успешно удалено
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложений успешно удалено
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для удаления предложения - войдите в систему
+        "403":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный идентификатор пользователя
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
+
   /offers/{offerId}/comments:
     get:
       tags:
