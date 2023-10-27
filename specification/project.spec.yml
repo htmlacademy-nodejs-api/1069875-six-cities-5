@@ -320,11 +320,68 @@ paths:
         - users
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
+
+      parameters:
+        - name: token
+          description: Токен аутентификации
+          in: query
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "201":
+          description: Успешный вход в систему. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "400":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь не авторизован
+
+
     post:
       tags:
         - users
       summary: Авторизация пользователя
       description: Вход в закрытую часть приложения. Авторизация на основе логина и пароля
+
+      requestBody:
+        description: Информация для входа в систему
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginData'
+
+      responses:
+        "201":
+          description: Успешный вход в систему. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "403":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный пароль
+        "404":
+          description: Пользователь с таким email не существует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь с таким email не существует
+
+
   /users/logout:
     delete:
       tags:
