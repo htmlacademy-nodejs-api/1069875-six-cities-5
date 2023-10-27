@@ -332,6 +332,32 @@ paths:
       summary: Завершение сеанса пользователя
       description: Выход из закрытой части приложения
 
+      parameters:
+        - name: token
+          description: Токен аутентификации
+          in: query
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "201":
+          description: Успешный выход из системы
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Успешный выход из системы
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка запроса
+
+
 components:
   schemas:
     offer:
