@@ -276,6 +276,44 @@ paths:
         - users
       summary: Регистрация пользователя
       description: Регистрирует нового пользователя
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+
+      responses:
+        "201":
+          description: Новый пользователь зарегистрирован. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Некорректный email
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Вы уже зарегистрированы в системе
+        "409":
+          description: Пользователь с таким email уже существует.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь с таким email уже существует.
+
+
   /users/login:
     get:
       tags:
