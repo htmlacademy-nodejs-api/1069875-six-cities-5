@@ -1,0 +1,601 @@
+openapi: 3.0.0
+info:
+  title: API сервер для проекта "Шесть городов".
+  description: |-
+    * Список ресурсов и маршрутов сервера "Шесть городов".
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: offers
+    description: Действия с объявлениями.
+  - name: users
+    description: Действия с пользователями.
+  - name: comments
+    description: Действия с комментариями.
+
+paths:
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Список предложений
+      description: Возвращает список предложений
+
+      parameters:
+        - name: count
+          description: Количество возвращаемых предложений
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/offer'
+    post:
+      tags:
+        - offers
+      summary: Публикация предложения
+      description: Публикует новое предложения
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createOffer'
+
+      responses:
+        "201":
+          description: Новое предложение создано. Объект предложения
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком длинное название
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для создания нового предложения - войдите в систему
+
+
+  /offers/premium:
+    get:
+      tags:
+        - offers
+      summary: Список премиальных предложений
+      description: Возвращает список премиальных предложений
+
+      parameters:
+        - name: city
+          description: Город
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/city'
+
+      responses:
+        "200":
+            description: Список премиальных предложений
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/offer'
+
+
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Полное предложение
+      description: Возвращает детальную информацию о предложении
+
+      responses:
+        "200":
+          description: Полное предложений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
+    put:
+      tags:
+        - offers
+      summary: Обновление предложения
+      description: Обновляет информацию о предложении
+
+      requestBody:
+        description: Информация для обновления предложения
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/createOffer'
+                - type: object
+                  properties:
+                    offerId:
+                      type: string
+                      example: 6329c3d6a04ab1061c6425ea
+
+      responses:
+        "200":
+          description: Предложений успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getOffer'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком длинное название
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для редактирования предложения - войдите в систему
+        "403":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный идентификатор пользователя
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения
+      description: Удаляет предложение
+
+      responses:
+        "200":
+          description: Предложений успешно удалено
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложений успешно удалено
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для удаления предложения - войдите в систему
+        "403":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный идентификатор пользователя
+        "404":
+          description: Предложение отсутствует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение с данным id не найдено
+
+
+  /offers/{offerId}/comments:
+    get:
+      tags:
+        - comments
+      summary: Список комментариев
+      description: Возвращает список комментариев для предложения
+
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/getComment'
+
+    post:
+      tags:
+        - comments
+      summary: Добавление комментария
+      description: Добавляет новый комментарий для предложения
+
+      requestBody:
+        description: Информация для создания нового комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createComment'
+
+      responses:
+        "201":
+          description: Новое комментарий создан. Объект комментария
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComment'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком короткий текст
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для создания нового комментария - войдите в систему
+
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+
+      responses:
+        "201":
+          description: Новый пользователь зарегистрирован. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Некорректный email
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Вы уже зарегистрированы в системе
+        "409":
+          description: Пользователь с таким email уже существует.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь с таким email уже существует.
+
+
+  /users/login:
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      parameters:
+        - name: token
+          description: Токен аутентификации
+          in: query
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "201":
+          description: Успешный вход в систему. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "400":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь не авторизован
+
+
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Вход в закрытую часть приложения. Авторизация на основе логина и пароля
+
+      requestBody:
+        description: Информация для входа в систему
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginData'
+
+      responses:
+        "201":
+          description: Успешный вход в систему. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUser'
+        "403":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Неверный пароль
+        "404":
+          description: Пользователь с таким email не существует
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь с таким email не существует
+
+
+  /users/logout:
+    delete:
+      tags:
+        - users
+      summary: Завершение сеанса пользователя
+      description: Выход из закрытой части приложения
+
+      parameters:
+        - name: token
+          description: Токен аутентификации
+          in: query
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "201":
+          description: Успешный выход из системы
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Успешный выход из системы
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка запроса
+
+
+components:
+  schemas:
+    offer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: Nice house
+        date:
+          type: string
+          example: 2024-01-01T12:00:00.000Z
+        city:
+          $ref: '#/components/schemas/city'
+        previewImage:
+          type: string
+          example: https://url-to-image/image.jpeg
+        isPremium:
+          type: boolean
+          example: false
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          format: float
+          example: 4.5
+        type:
+          type: string
+          example: house
+          enum:
+            - house
+            - room
+            - hotel
+            - apartment
+        price:
+          type: integer
+          format: int32
+          example: 1000
+        commentsNumber:
+          type: integer
+          format: int32
+          example: 12
+    fullOffer:
+      allOf:
+        - $ref: '#/components/schemas/offer'
+        - type: object
+          properties:
+            description:
+              type: string
+              example: Really nice house. Very comfy
+            images:
+              type: array
+              items:
+                type: string
+                example: https://url-to-image/image.jpeg
+            bedrooms:
+              type: integer
+              format: int32
+              example: 3
+            maxGuests:
+              type: integer
+              format: int32
+              example: 4
+            goods:
+              type: array
+              items:
+                type: string
+                example: Breakfast
+                enum:
+                  - Breakfast
+                  - Air conditioning
+                  - Laptop friendly workspace
+                  - Baby seat
+                  - Washer
+                  - Towels
+                  - Fridge
+            location:
+              $ref: '#/components/schemas/location'
+    getOffer:
+      allOf:
+        - $ref: '#/components/schemas/fullOffer'
+        - type: object
+          properties:
+            host:
+              $ref: '#/components/schemas/user'
+    createOffer:
+      allOf:
+        - $ref: '#/components/schemas/fullOffer'
+        - type: object
+          properties:
+            hostId:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
+    location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: 52.12345678901234
+        longitude:
+          type: number
+          format: float
+          example: 4.12345678901234
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tomas
+        email:
+          type: string
+          format: email
+          example: tomas@post.go
+        avatarUrl:
+          type: string
+          example: https://url-to-image/image.jpeg
+        isPro:
+          type: boolean
+          example: false
+    createUser:
+      allOf:
+        - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            password:
+              type: string
+              example: qwerty123
+    authUser:
+      allOf:
+        - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            token:
+              type: string
+              example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+    loginData:
+      type: object
+      properties:
+        email:
+          type: string
+          example: tomas@post.go
+        password:
+          type: string
+          example: qwerty123
+    city:
+      type: string
+      example: Paris
+      enum:
+        - Paris
+        - Cologne
+        - Brussels
+        - Amsterdam
+        - Hamburg
+        - Dusseldorf
+    comment:
+      type: object
+      properties:
+        text:
+          type: string
+          example: Good place!
+        date:
+          type: string
+          example: 2024-01-01T12:00:00.000Z
+        rating:
+          type: number
+          format: float
+          example: 4.5
+    getComment:
+      allOf:
+        - $ref: '#/components/schemas/comment'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/user'
+    createComment:
+      allOf:
+        - $ref: '#/components/schemas/comment'
+        - type: object
+          properties:
+            userId:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
