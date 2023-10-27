@@ -223,11 +223,53 @@ paths:
         - comments
       summary: Список комментариев
       description: Возвращает список комментариев для предложения
+
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/getComment'
+
     post:
       tags:
         - comments
       summary: Добавление комментария
       description: Добавляет новый комментарий для предложения
+
+      requestBody:
+        description: Информация для создания нового комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createComment'
+
+      responses:
+        "201":
+          description: Новое комментарий создан. Объект комментария
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getComment'
+        "400":
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Ошибка валидации. Слишком короткий текст
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Для создания нового комментария - войдите в систему
+
+
   /users/register:
     post:
       tags:
