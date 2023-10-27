@@ -373,6 +373,31 @@ components:
         isPro:
           type: boolean
           example: false
+    createUser:
+      allOf:
+        - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            password:
+              type: string
+              example: qwerty123
+    authUser:
+      allOf:
+        - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            token:
+              type: string
+              example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+    loginData:
+      type: object
+      properties:
+        email:
+          type: string
+          example: tomas@post.go
+        password:
+          type: string
+          example: qwerty123
     city:
       type: string
       example: Paris
@@ -383,3 +408,31 @@ components:
         - Amsterdam
         - Hamburg
         - Dusseldorf
+    comment:
+      type: object
+      properties:
+        text:
+          type: string
+          example: Good place!
+        date:
+          type: string
+          example: 2024-01-01T12:00:00.000Z
+        rating:
+          type: number
+          format: float
+          example: 4.5
+    getComment:
+      allOf:
+        - $ref: '#/components/schemas/comment'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/user'
+    createComment:
+      allOf:
+        - $ref: '#/components/schemas/comment'
+        - type: object
+          properties:
+            userId:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
