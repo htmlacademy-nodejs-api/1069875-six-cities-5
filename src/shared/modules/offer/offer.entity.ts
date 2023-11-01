@@ -1,6 +1,6 @@
 import { prop, getModelForClass, defaultClasses, modelOptions, Ref, Severity } from '@typegoose/typegoose';
 import { City, GoodType, OfferType, Location } from '../../types/index.js';
-import { DescriptionLength, GuestsNumber, OfferTitleLength, PriceValue, RatingValue, RoomsNumber } from '../../const/offer.js';
+import { DescriptionLength, GuestsNumber, OfferTitleLength, PriceValue, RoomsNumber } from '../../const/offer.js';
 import { UserEntity } from '../user/user.entity.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -62,17 +62,9 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public isPremium!: boolean;
 
   @prop({
-    require: true,
     default: false,
   })
-  public isFavorite!: boolean;
-
-  @prop({
-    require: true,
-    min: RatingValue.Min,
-    max: RatingValue.Max,
-  })
-  public rating!: number;
+  public isFavorite?: boolean;
 
   @prop({
     type: () => String,
@@ -115,11 +107,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     require: true,
   })
   public hostId!: Ref<UserEntity>;
-
-  @prop({
-    default: 0,
-  })
-  public commentsNumber?: number;
 
   @prop({
     require: true,

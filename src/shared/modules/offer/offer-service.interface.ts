@@ -7,5 +7,4 @@ export interface OfferService {
   findById(id: string): Promise<DocumentType<OfferEntity> | null>;
   updateById(id: string, dto: UpdateOfferDTO): Promise<DocumentType<OfferEntity> | null>;
   deleteById(id: string): Promise<DocumentType<OfferEntity> | null>;
-  updateRating(id: string): Promise<DocumentType<OfferEntity>>;
 }
