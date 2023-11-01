@@ -21,10 +21,31 @@ export class DefaultOfferService implements OfferService {
   public async find(count?: number): Promise<DocumentType<OfferEntity>[]> {
     const offersCount = count ?? DEFAULT_OFFER_COUNT;
     return this.offerModel
-      .find()
-      .sort({ date: SortType.Down })
-      .limit(offersCount)
-      .populate('userId')
+      .aggregate([
+        { $sort: { date: SortType.Down } },
+        { $limit: offersCount },
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id' },
+            pipeline: [
+              { $match: { offerId: '$$offerId' } },
+              { $project: { rating: 1 } },
+            ],
+            as: 'ratings',
+          },
+        },
+        {
+          $addFields: {
+            id: { $toString: '$_id' },
+            commentsNumber: { $size: '$ratings' },
+            rating: {
+              $cond: [{ $size: '$ratings' }, { $avg: '$ratings' }, 0]
+            },
+          },
+        },
+        { $unset: ['ratings', '_id', 'hostId'] },
+      ])
       .exec();
   }
 
