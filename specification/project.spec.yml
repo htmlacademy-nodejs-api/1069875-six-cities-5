@@ -125,7 +125,7 @@ paths:
                 type: string
                 example: Предложение с данным id не найдено
 
-    put:
+    patch:
       tags:
         - offers
       summary: Обновление предложения
