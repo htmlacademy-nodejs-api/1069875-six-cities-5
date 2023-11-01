@@ -56,7 +56,44 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(id).populate('userId').exec();
+    return this.offerModel
+      .aggregate([
+        { $match: { $expr : { $eq: [ '$_id' , { $toObjectId: id } ] } } },
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id' },
+            pipeline: [
+              { $match: { offerId: '$$offerId' } },
+              { $project: { rating: 1 } },
+            ],
+            as: 'ratings',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            let: { userId: '$hostId' },
+            pipeline: [
+              { $match: { $expr : { $eq: ['$_id', '$$userId']} } },
+              { $project: { password: 0 } },
+            ],
+            as: 'host',
+          },
+        },
+        {
+          $addFields: {
+            id: { $toString: '$_id' },
+            commentsNumber: { $size: '$ratings' },
+            rating: {
+              $cond: [{ $size: '$ratings' }, { $avg: '$ratings' }, 0]
+            },
+          },
+        },
+        { $unwind: '$host' },
+        { $unset: ['ratings', 'hostId'] },
+      ])
+      .exec().then((r) => r.at(0) || null);
   }
 
   public async updateById(
