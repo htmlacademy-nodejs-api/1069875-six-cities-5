@@ -1,16 +1,17 @@
 import { inject } from 'inversify';
-import { DefaultController, HttpMethod } from '../../libs/rest/index.js';
+import { DefaultController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
 import { Request, Response } from 'express';
 import { OfferRDO, OfferService } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
+import { StatusCodes } from 'http-status-codes';
 
 export class OfferController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService
-  ){
+  ) {
     super(logger);
 
     this.logger.info('Register routes for CategoryController…');
@@ -35,18 +36,34 @@ export class OfferController extends DefaultController {
   }
 
   public getPremiumOffers(_req: Request, _res: Response): void {
-    // код
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented',
+      'OfferController'
+    );
   }
 
   public getOffer(_req: Request, _res: Response): void {
-    // код
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented',
+      'OfferController'
+    );
   }
 
   public updateOffer(_req: Request, _res: Response): void {
-    // код
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented',
+      'OfferController'
+    );
   }
 
   public deleteOffer(_req: Request, _res: Response): void {
-    // код
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented',
+      'OfferController'
+    );
   }
 }
