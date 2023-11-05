@@ -1,6 +1,7 @@
 import { Response, Router } from 'express';
 import { Controller } from './controller.interface.js';
 import { inject, injectable } from 'inversify';
+import asyncHandler from 'express-async-handler';
 import { Component } from '../../../types/index.js';
 import { Logger } from '../../logger/index.js';
 import { Route } from '../index.js';
@@ -23,7 +24,7 @@ export abstract class DefaultController implements Controller {
   }
 
   public addRoute(route: Route): void {
-    this._router[route.method](route.path, route.handler.bind(this));
+    this._router[route.method](route.path, asyncHandler(route.handler.bind(this)));
     this.logger.info(
       `Route registered: ${route.method.toUpperCase()} ${route.path}`
     );
