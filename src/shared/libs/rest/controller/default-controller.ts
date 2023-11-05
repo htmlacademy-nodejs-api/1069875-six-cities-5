@@ -13,7 +13,7 @@ export abstract class DefaultController implements Controller {
   private readonly _router: Router;
 
   constructor(
-    @inject(Component.Logger) private readonly logger: Logger
+    @inject(Component.Logger) protected readonly logger: Logger
   ) {
     this._router = Router();
   }
