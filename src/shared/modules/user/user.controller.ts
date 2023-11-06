@@ -12,6 +12,7 @@ import { CreateUserRequest } from './create-user-request.type.js';
 import { UserRDO, UserService } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
+import { LoginRequest } from './login-request.type.js';
 
 @injectable()
 export class UserController extends DefaultController {
@@ -72,7 +73,17 @@ export class UserController extends DefaultController {
     );
   }
 
-  public login(_req: Request, _res: Response): void {
+  public async login({ body }: LoginRequest, _res: Response): Promise<void> {
+    const existedUser = await this.userService.findByEmail(body.email);
+
+    if (!existedUser) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        `User with email «${body.email}» not found.`,
+        'UserController'
+      );
+    }
+
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',
