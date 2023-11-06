@@ -7,3 +7,4 @@ export * from './offer.container.js';
 export * from './offer.const.js';
 export * from './offer.controller.js';
 export * from './rdo/index.js';
+export * from './create-offer-request.type.js';
