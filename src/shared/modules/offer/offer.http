@@ -1,6 +1,41 @@
 # Категории
-## Получить список категорий
+## Получить список предложений
 GET http://localhost:4000/offers HTTP/1.1
 Content-Type: application/json
+
+###
+
+# Пользователи
+## Создать новое предложение
+
+POST http://localhost:4000/offers HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Nice house",
+  "date": "2024-01-01T12:00:00.000Z",
+  "city": "Paris",
+  "previewImage": "https://url-to-image/image.jpeg",
+  "isPremium": false,
+  "isFavorite": false,
+  "rating": 4.5,
+  "type": "house",
+  "price": 1000,
+  "commentsNumber": 12,
+  "description": "Really nice house. Very comfy",
+  "images": [
+    "https://url-to-image/image.jpeg"
+  ],
+  "bedrooms": 3,
+  "maxGuests": 4,
+  "goods": [
+    "Breakfast"
+  ],
+  "location": {
+    "latitude": 52.12345678901234,
+    "longitude": 4.12345678901234
+  },
+  "hostId": "6532864f0fe8c4629c06f8e3"
+}
 
 ###
