@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import {
   DefaultController,
   HttpError,
@@ -9,6 +9,7 @@ import { Logger } from '../../libs/logger/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 
+@injectable()
 export class UserController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
