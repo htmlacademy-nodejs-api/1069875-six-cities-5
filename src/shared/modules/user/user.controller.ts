@@ -8,11 +8,17 @@ import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
+import { CreateUserRequest } from './create-user-request.type.js';
+import { UserRDO, UserService } from './index.js';
+import { Config, RestSchema } from '../../libs/config/index.js';
+import { fillDTO } from '../../helpers/index.js';
 
 @injectable()
 export class UserController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
+    @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.Config) private readonly config: Config<RestSchema>
   ) {
     super(logger);
 
@@ -40,12 +46,22 @@ export class UserController extends DefaultController {
     });
   }
 
-  public register(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
+  public async register(
+    { body }: CreateUserRequest,
+    res: Response
+  ): Promise<void> {
+    const existedUser = await this.userService.findByEmail(body.email);
+
+    if (existedUser) {
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `User with email «${body.email}» exists.`,
+        'UserController'
+      );
+    }
+
+    const result = await this.userService.create(body, this.config.get('SALT'));
+    this.created(res, fillDTO(UserRDO, result));
   }
 
   public checkAuth(_req: Request, _res: Response): void {
