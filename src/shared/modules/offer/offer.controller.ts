@@ -3,7 +3,7 @@ import { DefaultController, HttpError, HttpMethod } from '../../libs/rest/index.
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
 import { Request, Response } from 'express';
-import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO, ParamOfferId, UpdateOfferRequest } from './index.js';
+import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO, ParamOfferId, UpdateOfferRequest, GetOffersRequest } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { StatusCodes } from 'http-status-codes';
 
@@ -24,11 +24,10 @@ export class OfferController extends DefaultController {
     this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete});
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    // ожидает дополнения
-    const offers = await this.offerService.find();
-    const responseData = fillDTO(OfferRDO, offers);
-    this.ok(res, responseData);
+  public async index({ query: { limit } }: GetOffersRequest, res: Response): Promise<void> {
+    const count = (limit !== undefined) ? +limit : limit;
+    const offers = await this.offerService.find(count);
+    this.ok(res, fillDTO(OfferRDO, offers));
   }
 
   public async create(
@@ -38,8 +37,7 @@ export class OfferController extends DefaultController {
     // ожидает дополнения
     const result = await this.offerService.create(body);
     const offer = await this.offerService.findById(result.id);
-    const responseData = fillDTO(FullOfferRDO, offer);
-    this.created(res, responseData);
+    this.created(res, fillDTO(FullOfferRDO, offer));
   }
 
   public indexPremium(_req: Request, _res: Response): void {
@@ -52,7 +50,6 @@ export class OfferController extends DefaultController {
 
   public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
     const { offerId } = params;
-
     const offer = await this.offerService.findById(offerId);
 
     if (!offer) {

@@ -24,7 +24,7 @@ paths:
       description: Возвращает список предложений
 
       parameters:
-        - name: count
+        - name: limit
           description: Количество возвращаемых предложений
           in: query
           required: false
