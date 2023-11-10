@@ -101,8 +101,7 @@ export class DefaultOfferService implements OfferService {
     dto: UpdateOfferDTO
   ): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
-      .findByIdAndUpdate(id, dto, { new: true })
-      .populate('userId')
+      .findByIdAndUpdate(id, dto)
       .exec();
   }
 
