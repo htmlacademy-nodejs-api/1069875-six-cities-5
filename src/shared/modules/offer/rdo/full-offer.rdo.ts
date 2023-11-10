@@ -10,6 +10,9 @@ export class FullOfferRDO {
   public description: string;
 
   @Expose()
+  public isPremium: boolean;
+
+  @Expose()
   public date: string;
 
   @Expose()

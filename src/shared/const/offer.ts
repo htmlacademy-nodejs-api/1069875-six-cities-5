@@ -1,4 +1,5 @@
 export const IMAGES_NUMBER = 6;
+export const PREMIUM_OFFERS_NUMBER = 3;
 
 export enum OfferTitleLength {
   Min = 10,

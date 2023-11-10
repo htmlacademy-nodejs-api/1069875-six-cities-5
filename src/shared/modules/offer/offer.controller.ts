@@ -40,12 +40,9 @@ export class OfferController extends DefaultController {
     this.created(res, fillDTO(FullOfferRDO, offer));
   }
 
-  public indexPremium(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'OfferController'
-    );
+  public async indexPremium(_req: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.findPremium();
+    this.ok(res, fillDTO(OfferRDO, offers));
   }
 
   public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {

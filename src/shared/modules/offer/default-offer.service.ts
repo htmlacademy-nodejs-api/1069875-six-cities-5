@@ -70,6 +70,23 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
+  public async findPremium(): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .aggregate([
+        { $match: { isPremium: true } },
+        { $sort: { date: SortType.Down } },
+        { $limit: PREMIUM_OFFERS_NUMBER },
+        {
+          $addFields: {
+            id: { $toString: '$_id' },
+          },
+        },
+        PipelineStage.LookUpRatings,
+        PipelineStage.AddCountingFields,
+      ])
+      .exec();
+  }
+
   public async create(dto: CreateOfferDTO): Promise<DocumentType<OfferEntity>> {
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
