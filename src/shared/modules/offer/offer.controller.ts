@@ -3,7 +3,7 @@ import { DefaultController, HttpError, HttpMethod } from '../../libs/rest/index.
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
 import { Request, Response } from 'express';
-import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO } from './index.js';
+import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO, ParamOfferId } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { StatusCodes } from 'http-status-codes';
 
@@ -50,12 +50,20 @@ export class OfferController extends DefaultController {
     );
   }
 
-  public show(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'OfferController'
-    );
+  public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
+
+    const offer = await this.offerService.findById(offerId);
+
+    if (!offer) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${offerId} not found.`,
+        'OfferController'
+      );
+    }
+
+    this.ok(res, fillDTO(FullOfferRDO, offer));
   }
 
   public update(_req: Request, _res: Response): void {

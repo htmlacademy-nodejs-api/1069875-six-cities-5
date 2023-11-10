@@ -1,5 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { LocationRDO } from './location.rdo.js';
+import { UserRDO } from '../../user/index.js';
 
 export class FullOfferRDO {
   @Expose()
@@ -44,4 +45,8 @@ export class FullOfferRDO {
   @Expose()
   @Type(() => LocationRDO)
   public location: LocationRDO;
+
+  @Expose()
+  @Type(() => UserRDO)
+  public host: UserRDO;
 }
