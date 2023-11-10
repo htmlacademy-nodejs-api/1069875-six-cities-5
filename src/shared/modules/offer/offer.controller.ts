@@ -16,22 +16,22 @@ export class OfferController extends DefaultController {
 
     this.logger.info('Register routes for CategoryController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.getOffers});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createOffer});
-    this.addRoute({path: '/premium', method: HttpMethod.Get, handler: this.getPremiumOffers});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.getOffer});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Patch, handler: this.updateOffer});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.deleteOffer});
+    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
+    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({path: '/premium', method: HttpMethod.Get, handler: this.indexPremium});
+    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.show});
+    this.addRoute({path: '/:offerId', method: HttpMethod.Patch, handler: this.update});
+    this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete});
   }
 
-  public async getOffers(_req: Request, res: Response): Promise<void> {
+  public async index(_req: Request, res: Response): Promise<void> {
     // ожидает дополнения
     const offers = await this.offerService.find();
     const responseData = fillDTO(OfferRDO, offers);
     this.ok(res, responseData);
   }
 
-  public async createOffer(
+  public async create(
     { body }: CreateOfferRequest,
     res: Response
   ): Promise<void> {
@@ -42,7 +42,7 @@ export class OfferController extends DefaultController {
     this.created(res, responseData);
   }
 
-  public getPremiumOffers(_req: Request, _res: Response): void {
+  public indexPremium(_req: Request, _res: Response): void {
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',
@@ -50,7 +50,7 @@ export class OfferController extends DefaultController {
     );
   }
 
-  public getOffer(_req: Request, _res: Response): void {
+  public show(_req: Request, _res: Response): void {
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',
@@ -58,7 +58,7 @@ export class OfferController extends DefaultController {
     );
   }
 
-  public updateOffer(_req: Request, _res: Response): void {
+  public update(_req: Request, _res: Response): void {
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',
@@ -66,7 +66,7 @@ export class OfferController extends DefaultController {
     );
   }
 
-  public deleteOffer(_req: Request, _res: Response): void {
+  public delete(_req: Request, _res: Response): void {
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',
