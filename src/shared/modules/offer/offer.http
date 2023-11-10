@@ -39,4 +39,12 @@ Content-Type: application/json
 
 ###
 
+## Получить полное предложение по идентификатору
+
 GET http://localhost:4000/offers/6532864f0fe8c4629c06f8e5 HTTP/1.1
+
+###
+
+## Удалить объявление по идентификатору
+
+DELETE http://localhost:4000/offers/6532864f0fe8c4629c06f8e8 HTTP/1.1
