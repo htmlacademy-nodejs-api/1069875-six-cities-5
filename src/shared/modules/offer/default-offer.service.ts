@@ -16,10 +16,10 @@ const PipelineStage: { [key: string]: PipelineStage } = {
   LookUpRatings: {
     $lookup: {
       from: 'comments',
-      let: { offerId: '$_id' },
+      let: { offer: '$_id' },
       pipeline: [
-        { $match: { offerId: '$$offerId' } },
-        { $project: { rating: 1 } },
+        { $match: { $expr: { $eq: ['$offerId', '$$offer'] } } },
+        { $project: { rating: 1, _id: 0 } },
       ],
       as: 'ratings',
     },
@@ -28,7 +28,7 @@ const PipelineStage: { [key: string]: PipelineStage } = {
     $addFields: {
       commentsNumber: { $size: '$ratings' },
       rating: {
-        $cond: [{ $size: '$ratings' }, { $avg: '$ratings' }, 0],
+        $cond: [{ $size: '$ratings' }, { $avg: '$ratings.rating' }, 0],
       },
     },
   },
