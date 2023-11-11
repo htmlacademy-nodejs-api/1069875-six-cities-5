@@ -6,11 +6,13 @@ import { Request, Response } from 'express';
 import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO, ParamOfferId, UpdateOfferRequest, GetOffersRequest } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { StatusCodes } from 'http-status-codes';
+import { CommentRDO, CommentService } from '../comment/index.js';
 
 export class OfferController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
-    @inject(Component.OfferService) private readonly offerService: OfferService
+    @inject(Component.OfferService) private readonly offerService: OfferService,
+    @inject(Component.CommentService) private readonly commentService: CommentService
   ) {
     super(logger);
 
@@ -22,6 +24,7 @@ export class OfferController extends DefaultController {
     this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.show});
     this.addRoute({path: '/:offerId', method: HttpMethod.Patch, handler: this.update});
     this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete});
+    this.addRoute({path: '/:offerId/comments', method: HttpMethod.Get, handler: this.getComments});
   }
 
   public async index({ query: { limit } }: GetOffersRequest, res: Response): Promise<void> {
@@ -88,6 +91,24 @@ export class OfferController extends DefaultController {
       );
     }
 
+    await this.commentService.deleteByOfferId(offerId);
+
     this.noContent(res, offer);
+  }
+
+  public async getComments({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
+    const offer = await this.offerService.exists(offerId);
+
+    if (!offer) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${offerId} not found.`,
+        'OfferController'
+      );
+    }
+
+    const comments = await this.commentService.findByOfferId(offerId);
+    this.ok(res, fillDTO(CommentRDO, comments));
   }
 }
