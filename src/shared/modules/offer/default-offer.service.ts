@@ -123,4 +123,8 @@ export class DefaultOfferService implements OfferService {
   ): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel.findByIdAndDelete(id).exec();
   }
+
+  public async exists(id: string): Promise<boolean> {
+    return (await this.offerModel.exists({_id: id})) !== null;
+  }
 }
