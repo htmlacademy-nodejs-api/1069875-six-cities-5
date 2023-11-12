@@ -1,9 +1,22 @@
 import { inject } from 'inversify';
-import { DefaultController, HttpError, HttpMethod } from '../../libs/rest/index.js';
+import {
+  DefaultController,
+  HttpError,
+  HttpMethod,
+  ValidateObjectIdMiddleware,
+} from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
 import { Request, Response } from 'express';
-import { OfferRDO, OfferService, CreateOfferRequest, FullOfferRDO, ParamOfferId, UpdateOfferRequest, GetOffersRequest } from './index.js';
+import {
+  OfferRDO,
+  OfferService,
+  CreateOfferRequest,
+  FullOfferRDO,
+  ParamOfferId,
+  UpdateOfferRequest,
+  GetOffersRequest,
+} from './index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { StatusCodes } from 'http-status-codes';
 import { CommentRDO, CommentService } from '../comment/index.js';
@@ -12,23 +25,51 @@ export class OfferController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
-    @inject(Component.CommentService) private readonly commentService: CommentService
+    @inject(Component.CommentService)
+    private readonly commentService: CommentService
   ) {
     super(logger);
 
     this.logger.info('Register routes for CategoryController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/premium', method: HttpMethod.Get, handler: this.indexPremium});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.show});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Patch, handler: this.update});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete});
-    this.addRoute({path: '/:offerId/comments', method: HttpMethod.Get, handler: this.getComments});
+    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
+    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/premium',
+      method: HttpMethod.Get,
+      handler: this.indexPremium,
+    });
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
+    this.addRoute({
+      path: '/:offerId/comments',
+      method: HttpMethod.Get,
+      handler: this.getComments,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
   }
 
-  public async index({ query: { limit } }: GetOffersRequest, res: Response): Promise<void> {
-    const count = (limit !== undefined) ? +limit : limit;
+  public async index(
+    { query: { limit } }: GetOffersRequest,
+    res: Response
+  ): Promise<void> {
+    const count = limit !== undefined ? +limit : limit;
     const offers = await this.offerService.find(count);
     this.ok(res, fillDTO(OfferRDO, offers));
   }
@@ -48,7 +89,10 @@ export class OfferController extends DefaultController {
     this.ok(res, fillDTO(OfferRDO, offers));
   }
 
-  public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+  public async show(
+    { params }: Request<ParamOfferId>,
+    res: Response
+  ): Promise<void> {
     const { offerId } = params;
     const offer = await this.offerService.findById(offerId);
 
@@ -63,7 +107,10 @@ export class OfferController extends DefaultController {
     this.ok(res, fillDTO(FullOfferRDO, offer));
   }
 
-  public async update({ params, body }: UpdateOfferRequest, res: Response): Promise<void> {
+  public async update(
+    { params, body }: UpdateOfferRequest,
+    res: Response
+  ): Promise<void> {
     const { offerId } = params;
     await this.offerService.updateById(offerId, body);
     const offer = await this.offerService.findById(offerId);
@@ -79,7 +126,10 @@ export class OfferController extends DefaultController {
     this.ok(res, fillDTO(FullOfferRDO, offer));
   }
 
-  public async delete({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+  public async delete(
+    { params }: Request<ParamOfferId>,
+    res: Response
+  ): Promise<void> {
     const { offerId } = params;
     const offer = await this.offerService.deleteById(offerId);
 
@@ -96,7 +146,10 @@ export class OfferController extends DefaultController {
     this.noContent(res, offer);
   }
 
-  public async getComments({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+  public async getComments(
+    { params }: Request<ParamOfferId>,
+    res: Response
+  ): Promise<void> {
     const { offerId } = params;
     const offer = await this.offerService.exists(offerId);
 
