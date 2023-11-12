@@ -1,1 +1,1 @@
-export * from './create-comment-request.js';
+export * from './create-comment-request.type.js';
