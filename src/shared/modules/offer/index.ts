@@ -1,5 +1,6 @@
 export * from './rdo/index.js';
 export * from './type/index.js';
+export * from './messages/index.js';
 export * from './dto/index.js';
 export * from './offer.entity.js';
 export * from './offer-service.interface.js';
