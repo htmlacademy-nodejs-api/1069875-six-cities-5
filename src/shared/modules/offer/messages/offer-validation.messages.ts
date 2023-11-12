@@ -36,7 +36,7 @@ export const OfferValidationMessage = {
     invalidFormat: 'Field isPremium must be a boolean type',
   },
   type: {
-    invalidFormat: `Type must be from options: ${OfferType}`,
+    invalidFormat: `Type must be from options: ${transformObjectValuesToString(OfferType)}`,
   },
   bedrooms: {
     invalidFormat: 'Field bedrooms must be an integer',
@@ -52,7 +52,7 @@ export const OfferValidationMessage = {
   },
   goods: {
     invalidFormat: 'Field goods must be an array',
-    invalidItems: `Goods must be one or few options: ${GoodType}`,
+    invalidItems: `Goods must be one or few options: ${transformObjectValuesToString(GoodType)}`,
   },
   hostId: {
     invalidId: 'HostId field must be a valid id',

@@ -72,7 +72,7 @@ export class CreateOfferDTO {
   public price: number;
 
   @IsArray({ message: OfferValidationMessage.goods.invalidFormat })
-  @IsEnum({ each: true, message: OfferValidationMessage.goods.invalidItems })
+  @IsEnum(GoodType, { each: true, message: OfferValidationMessage.goods.invalidItems })
   public goods: GoodType[];
 
   @IsMongoId({ message: OfferValidationMessage.hostId.invalidId })
