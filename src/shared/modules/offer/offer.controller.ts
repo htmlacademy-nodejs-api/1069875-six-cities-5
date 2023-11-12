@@ -2,7 +2,6 @@ import { inject } from 'inversify';
 import {
   DefaultController,
   DocumentExistsMiddleware,
-  HttpError,
   HttpMethod,
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
@@ -22,7 +21,6 @@ import {
   UpdateOfferDTO,
 } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
-import { StatusCodes } from 'http-status-codes';
 import { CommentRDO, CommentService } from '../comment/index.js';
 
 export class OfferController extends DefaultController {
@@ -117,15 +115,6 @@ export class OfferController extends DefaultController {
   ): Promise<void> {
     const { offerId } = params;
     const offer = await this.offerService.findById(offerId);
-
-    if (!offer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${offerId} not found.`,
-        'OfferController'
-      );
-    }
-
     this.ok(res, fillDTO(FullOfferRDO, offer));
   }
 
@@ -136,15 +125,6 @@ export class OfferController extends DefaultController {
     const { offerId } = params;
     await this.offerService.updateById(offerId, body);
     const offer = await this.offerService.findById(offerId);
-
-    if (!offer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${offerId} not found.`,
-        'OfferController'
-      );
-    }
-
     this.ok(res, fillDTO(FullOfferRDO, offer));
   }
 
@@ -154,17 +134,7 @@ export class OfferController extends DefaultController {
   ): Promise<void> {
     const { offerId } = params;
     const offer = await this.offerService.deleteById(offerId);
-
-    if (!offer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${offerId} not found.`,
-        'OfferController'
-      );
-    }
-
     await this.commentService.deleteByOfferId(offerId);
-
     this.noContent(res, offer);
   }
 
@@ -173,16 +143,6 @@ export class OfferController extends DefaultController {
     res: Response
   ): Promise<void> {
     const { offerId } = params;
-    const offer = await this.offerService.exists(offerId);
-
-    if (!offer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${offerId} not found.`,
-        'OfferController'
-      );
-    }
-
     const comments = await this.commentService.findByOfferId(offerId);
     this.ok(res, fillDTO(CommentRDO, comments));
   }
