@@ -3,6 +3,7 @@ import {
   DefaultController,
   HttpError,
   HttpMethod,
+  ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
@@ -16,6 +17,8 @@ import {
   ParamOfferId,
   UpdateOfferRequest,
   GetOffersRequest,
+  CreateOfferDTO,
+  UpdateOfferDTO,
 } from './index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { StatusCodes } from 'http-status-codes';
@@ -33,7 +36,12 @@ export class OfferController extends DefaultController {
     this.logger.info('Register routes for CategoryController…');
 
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDTOMiddleware(CreateOfferDTO)],
+    });
     this.addRoute({
       path: '/premium',
       method: HttpMethod.Get,
@@ -49,7 +57,10 @@ export class OfferController extends DefaultController {
       path: '/:offerId',
       method: HttpMethod.Patch,
       handler: this.update,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new ValidateDTOMiddleware(UpdateOfferDTO),
+      ],
     });
     this.addRoute({
       path: '/:offerId',
