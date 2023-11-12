@@ -24,7 +24,15 @@ export abstract class DefaultController implements Controller {
   }
 
   public addRoute(route: Route): void {
-    this._router[route.method](route.path, asyncHandler(route.handler.bind(this)));
+    const wrapperAsyncHandler = asyncHandler(route.handler.bind(this));
+    const middlewaresHandlers = route.middlewares?.map(
+      (item) => asyncHandler(item.execute.bind(item))
+    );
+    const allHandlers = middlewaresHandlers
+      ? [...middlewaresHandlers, wrapperAsyncHandler]
+      : wrapperAsyncHandler;
+
+    this._router[route.method](route.path, allHandlers);
     this.logger.info(
       `Route registered: ${route.method.toUpperCase()} ${route.path}`
     );

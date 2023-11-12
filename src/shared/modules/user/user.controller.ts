@@ -3,16 +3,15 @@ import {
   DefaultController,
   HttpError,
   HttpMethod,
+  ValidateDTOMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
-import { CreateUserRequest } from './create-user-request.type.js';
-import { UserRDO, UserService } from './index.js';
+import { UserRDO, UserService, CreateUserRequest, LoginRequest, CreateUserDTO, LoginDTO } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
-import { LoginRequest } from './login-request.type.js';
 
 @injectable()
 export class UserController extends DefaultController {
@@ -29,6 +28,7 @@ export class UserController extends DefaultController {
       path: '/register',
       method: HttpMethod.Post,
       handler: this.register,
+      middlewares: [new ValidateDTOMiddleware(CreateUserDTO)],
     });
     this.addRoute({
       path: '/login',
@@ -39,6 +39,7 @@ export class UserController extends DefaultController {
       path: '/login',
       method: HttpMethod.Post,
       handler: this.login,
+      middlewares: [new ValidateDTOMiddleware(LoginDTO)],
     });
     this.addRoute({
       path: '/logout',

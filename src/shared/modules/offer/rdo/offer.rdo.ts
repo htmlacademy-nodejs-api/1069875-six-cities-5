@@ -23,5 +23,8 @@ export class OfferRDO {
   public price: number;
 
   @Expose()
+  public isPremium: boolean;
+
+  @Expose()
   public commentsNumber: number;
 }

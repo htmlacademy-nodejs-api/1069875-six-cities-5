@@ -32,3 +32,7 @@ export function createErrorObject(message: string) {
     message,
   };
 }
+
+export function transformObjectValuesToString(items: object) {
+  return Object.values(items).join(', ');
+}

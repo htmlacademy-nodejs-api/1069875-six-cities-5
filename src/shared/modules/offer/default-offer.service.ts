@@ -9,6 +9,41 @@ import { OfferService } from './offer-service.interface.js';
 import { OfferEntity } from './offer.entity.js';
 import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
+import { PipelineStage } from 'mongoose';
+import { PREMIUM_OFFERS_NUMBER } from '../../const/index.js';
+
+const PipelineStage: { [key: string]: PipelineStage } = {
+  LookUpRatings: {
+    $lookup: {
+      from: 'comments',
+      let: { offer: '$_id' },
+      pipeline: [
+        { $match: { $expr: { $eq: ['$offerId', '$$offer'] } } },
+        { $project: { rating: 1, _id: 0 } },
+      ],
+      as: 'ratings',
+    },
+  },
+  AddCountingFields: {
+    $addFields: {
+      commentsNumber: { $size: '$ratings' },
+      rating: {
+        $cond: [{ $size: '$ratings' }, { $avg: '$ratings.rating' }, 0],
+      },
+    },
+  },
+  LookUpHostData: {
+    $lookup: {
+      from: 'users',
+      let: { userId: '$hostId' },
+      pipeline: [
+        { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+        { $project: { password: 0 } },
+      ],
+      as: 'host',
+    },
+  },
+};
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -25,26 +60,29 @@ export class DefaultOfferService implements OfferService {
         { $sort: { date: SortType.Down } },
         { $limit: offersCount },
         {
-          $lookup: {
-            from: 'comments',
-            let: { offerId: '$_id' },
-            pipeline: [
-              { $match: { offerId: '$$offerId' } },
-              { $project: { rating: 1 } },
-            ],
-            as: 'ratings',
+          $addFields: {
+            id: { $toString: '$_id' },
           },
         },
+        PipelineStage.LookUpRatings,
+        PipelineStage.AddCountingFields,
+      ])
+      .exec();
+  }
+
+  public async findPremium(): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .aggregate([
+        { $match: { isPremium: true } },
+        { $sort: { date: SortType.Down } },
+        { $limit: PREMIUM_OFFERS_NUMBER },
         {
           $addFields: {
             id: { $toString: '$_id' },
-            commentsNumber: { $size: '$ratings' },
-            rating: {
-              $cond: [{ $size: '$ratings' }, { $avg: '$ratings' }, 0]
-            },
           },
         },
-        { $unset: ['ratings', '_id', 'hostId'] },
+        PipelineStage.LookUpRatings,
+        PipelineStage.AddCountingFields,
       ])
       .exec();
   }
@@ -58,57 +96,35 @@ export class DefaultOfferService implements OfferService {
   public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .aggregate([
-        { $match: { $expr : { $eq: [ '$_id' , { $toObjectId: id } ] } } },
-        {
-          $lookup: {
-            from: 'comments',
-            let: { offerId: '$_id' },
-            pipeline: [
-              { $match: { offerId: '$$offerId' } },
-              { $project: { rating: 1 } },
-            ],
-            as: 'ratings',
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            let: { userId: '$hostId' },
-            pipeline: [
-              { $match: { $expr : { $eq: ['$_id', '$$userId']} } },
-              { $project: { password: 0 } },
-            ],
-            as: 'host',
-          },
-        },
+        { $match: { $expr: { $eq: ['$_id', { $toObjectId: id }] } } },
+        PipelineStage.LookUpRatings,
+        PipelineStage.AddCountingFields,
+        PipelineStage.LookUpHostData,
         {
           $addFields: {
             id: { $toString: '$_id' },
-            commentsNumber: { $size: '$ratings' },
-            rating: {
-              $cond: [{ $size: '$ratings' }, { $avg: '$ratings' }, 0]
-            },
           },
         },
         { $unwind: '$host' },
-        { $unset: ['ratings', 'hostId'] },
       ])
-      .exec().then((r) => r.at(0) || null);
+      .exec()
+      .then((r) => r.at(0) || null);
   }
 
   public async updateById(
     id: string,
     dto: UpdateOfferDTO
   ): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel
-      .findByIdAndUpdate(id, dto, { new: true })
-      .populate('userId')
-      .exec();
+    return this.offerModel.findByIdAndUpdate(id, dto).exec();
   }
 
   public async deleteById(
     id: string
   ): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel.findByIdAndDelete(id).exec();
+  }
+
+  public async exists(id: string): Promise<boolean> {
+    return (await this.offerModel.exists({_id: id})) !== null;
   }
 }

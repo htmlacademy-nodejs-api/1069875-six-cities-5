@@ -24,7 +24,7 @@ paths:
       description: Возвращает список предложений
 
       parameters:
-        - name: count
+        - name: limit
           description: Количество возвращаемых предложений
           in: query
           required: false
@@ -234,6 +234,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/getComment'
 
+
+
+  /comments:
     post:
       tags:
         - comments
