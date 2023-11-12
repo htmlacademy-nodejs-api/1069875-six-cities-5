@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import express, { Express} from 'express';
+import express, { Express } from 'express';
 import { Config, RestSchema } from '../shared/libs/config/index.js';
 import { Logger } from '../shared/libs/logger/index.js';
 import { Component } from '../shared/types/component.enum.js';
@@ -29,7 +29,7 @@ export class RestApplication {
       this.config.get('DB_PASSWORD'),
       this.config.get('DB_HOST'),
       this.config.get('DB_PORT'),
-      this.config.get('DB_NAME'),
+      this.config.get('DB_NAME')
     );
 
     return this.databaseClient.connect(mongoURI);
@@ -48,10 +48,16 @@ export class RestApplication {
 
   private async _initMiddleware() {
     this.server.use(express.json());
+    this.server.use(
+      '/upload',
+      express.static(this.config.get('UPLOAD_DIRECTORY'))
+    );
   }
 
   private async _initExceptionFilters() {
-    this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
+    this.server.use(
+      this.appExceptionFilter.catch.bind(this.appExceptionFilter)
+    );
   }
 
   public async init() {
