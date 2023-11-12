@@ -11,11 +11,6 @@ export enum DescriptionLength {
   Max = 1024,
 }
 
-export enum RatingValue {
-  Min = 1,
-  Max = 5,
-}
-
 export enum RoomsNumber {
   Min = 1,
   Max = 8,
