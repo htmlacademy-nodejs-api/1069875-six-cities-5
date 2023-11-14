@@ -28,14 +28,16 @@ Content-Type: application/json
 
 ## Получить список избранного пользователя
 
-GET http://localhost:4000/users/6532864f0fe8c4629c06f8e3/favorite HTTP/1.1
+GET http://localhost:4000/users/favorite HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNhbUBwb3N0LmdvIiwibmFtZSI6IlNhbSIsImlkIjoiNjU0OGU1ODk1NmFlMDE1MDQ3NWJmOGE4IiwiaXNQcm8iOmZhbHNlLCJpYXQiOjE2OTk5ODQzNzAsImV4cCI6MTcwMDE1NzE3MH0.0gDlFXUk_4Nkdl15NmQD3q-HRsrcDszumE5ROkHmzow
 
 ###
 
 ## Добавить предложение в избранное
 
-PATCH  http://localhost:4000/users/6532864f0fe8c4629c06f8e3/favorite HTTP/1.1
+PATCH  http://localhost:4000/users/favorite HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNhbUBwb3N0LmdvIiwibmFtZSI6IlNhbSIsImlkIjoiNjU0OGU1ODk1NmFlMDE1MDQ3NWJmOGE4IiwiaXNQcm8iOmZhbHNlLCJpYXQiOjE2OTk5ODQzNzAsImV4cCI6MTcwMDE1NzE3MH0.0gDlFXUk_4Nkdl15NmQD3q-HRsrcDszumE5ROkHmzow
 
 {
   "offerId": "6532864f0fe8c4629c06f8fa",

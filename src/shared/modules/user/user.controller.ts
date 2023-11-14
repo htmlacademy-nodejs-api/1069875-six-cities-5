@@ -6,7 +6,6 @@ import {
   UploadFileMiddleware,
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
-  DocumentExistsMiddleware,
   PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
@@ -76,21 +75,19 @@ export class UserController extends DefaultController {
       ],
     });
     this.addRoute({
-      path: '/:userId/favorite',
+      path: '/favorite',
       method: HttpMethod.Get,
       handler: this.getFavorites,
       middlewares: [
-        new ValidateObjectIdMiddleware('userId'),
-        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+        new PrivateRouteMiddleware(),
       ],
     });
     this.addRoute({
-      path: '/:userId/favorite',
+      path: '/favorite',
       method: HttpMethod.Patch,
       handler: this.updateFavorite,
       middlewares: [
-        new ValidateObjectIdMiddleware('userId'),
-        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+        new PrivateRouteMiddleware(),
       ],
     });
   }
@@ -157,10 +154,10 @@ export class UserController extends DefaultController {
   }
 
   public async getFavorites(
-    { params }: Request<ParamUserId>,
+    { tokenPayload }: Request<ParamUserId>,
     res: Response
   ): Promise<void> {
-    const { userId } = params;
+    const userId = tokenPayload.id;
     const user = await this.userService.findById(userId);
 
     if (!user) {
@@ -176,10 +173,10 @@ export class UserController extends DefaultController {
   }
 
   public async updateFavorite(
-    { params, body }: UpdateFavoriteRequest,
+    { tokenPayload, body }: UpdateFavoriteRequest,
     res: Response
   ): Promise<void> {
-    const { userId } = params;
+    const userId = tokenPayload.id;
     const { offerId, toFavorite } = body;
 
     const user = await this.userService.findById(userId);
