@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class AuthUserRDO {
+export class FullUserDataRDO {
   @Expose()
   public name: string;
 

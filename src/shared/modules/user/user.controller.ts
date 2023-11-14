@@ -21,17 +21,20 @@ import {
   LoginDTO,
   ParamUserId,
   UpdateFavoriteRequest,
-  AuthUserRDO,
+  FullUserDataRDO,
+  LoggedUserRDO,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { OfferRDO, OfferService } from '../offer/index.js';
+import { AuthService } from '../auth/index.js';
 
 @injectable()
 export class UserController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.AuthService) private readonly authService: AuthService,
     @inject(Component.OfferService) private readonly offerService: OfferService,
     @inject(Component.Config) private readonly config: Config<RestSchema>
   ) {
@@ -116,21 +119,15 @@ export class UserController extends DefaultController {
     );
   }
 
-  public async login({ body }: LoginRequest, _res: Response): Promise<void> {
-    const existedUser = await this.userService.findByEmail(body.email);
-
-    if (!existedUser) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        `User with email «${body.email}» not found.`,
-        'UserController'
-      );
-    }
-
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
+  public async login({ body }: LoginRequest, res: Response): Promise<void> {
+    const user = await this.authService.verify(body);
+    const token = await this.authService.authenticate(user);
+    this.ok(
+      res,
+      fillDTO(LoggedUserRDO, {
+        email: user.email,
+        token,
+      })
     );
   }
 
@@ -192,7 +189,11 @@ export class UserController extends DefaultController {
       );
     }
 
-    const updatedUserData = await this.userService.updateFavorites(userId, offerId, toFavorite);
-    this.ok(res, fillDTO(AuthUserRDO, updatedUserData));
+    const updatedUserData = await this.userService.updateFavorites(
+      userId,
+      offerId,
+      toFavorite
+    );
+    this.ok(res, fillDTO(FullUserDataRDO, updatedUserData));
   }
 }
