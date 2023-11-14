@@ -7,6 +7,7 @@ import {
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
   DocumentExistsMiddleware,
+  PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -52,6 +53,7 @@ export class UserController extends DefaultController {
       path: '/login',
       method: HttpMethod.Get,
       handler: this.checkAuth,
+      middlewares: [new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/login',
@@ -111,12 +113,21 @@ export class UserController extends DefaultController {
     this.created(res, fillDTO(UserRDO, result));
   }
 
-  public checkAuth(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
+  public async checkAuth(
+    { tokenPayload: { id } }: Request,
+    res: Response
+  ): Promise<void> {
+    const user = await this.userService.findById(id);
+
+    if (!user) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(FullUserDataRDO, user));
   }
 
   public async login({ body }: LoginRequest, res: Response): Promise<void> {
