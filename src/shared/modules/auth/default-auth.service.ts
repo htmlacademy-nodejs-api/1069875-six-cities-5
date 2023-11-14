@@ -1,5 +1,5 @@
 import * as crypto from 'node:crypto';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { AuthService } from './auth-service.interface.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -10,6 +10,7 @@ import { SignJWT } from 'jose';
 import { JWT_ALGORITHM, JWT_EXPIRED } from './auth.const.js';
 import { UserNotFoundException, UserPasswordIncorrectException } from './index.js';
 
+@injectable()
 export class DefaultAuthService implements AuthService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
