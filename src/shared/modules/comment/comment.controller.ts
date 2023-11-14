@@ -3,6 +3,7 @@ import {
   DefaultController,
   HttpError,
   HttpMethod,
+  PrivateRouteMiddleware,
   ValidateDTOMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
@@ -34,7 +35,10 @@ export class CommentController extends DefaultController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDTOMiddleware(CreateCommentDTO)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDTOMiddleware(CreateCommentDTO),
+      ],
     });
   }
 
