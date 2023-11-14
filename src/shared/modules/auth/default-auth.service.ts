@@ -8,6 +8,7 @@ import { LoginDTO, UserEntity, UserService } from '../user/index.js';
 import { TokenPayload } from './index.js';
 import { SignJWT } from 'jose';
 import { JWT_ALGORITHM, JWT_EXPIRED } from './auth.const.js';
+import { UserNotFoundException, UserPasswordIncorrectException } from './index.js';
 
 export class DefaultAuthService implements AuthService {
   constructor(
