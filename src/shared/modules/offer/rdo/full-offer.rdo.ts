@@ -13,6 +13,9 @@ export class FullOfferRDO {
   public isPremium: boolean;
 
   @Expose()
+  public isFavorite: boolean;
+
+  @Expose()
   public date: string;
 
   @Expose()
