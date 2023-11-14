@@ -20,6 +20,8 @@ import {
   CreateUserDTO,
   LoginDTO,
   ParamUserId,
+  UpdateFavoriteRequest,
+  AuthUserRDO,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -72,6 +74,15 @@ export class UserController extends DefaultController {
       path: '/:userId/favorite',
       method: HttpMethod.Get,
       handler: this.getFavorites,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+      ],
+    });
+    this.addRoute({
+      path: '/:userId/favorite',
+      method: HttpMethod.Patch,
+      handler: this.updateFavorite,
       middlewares: [
         new ValidateObjectIdMiddleware('userId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
@@ -154,5 +165,34 @@ export class UserController extends DefaultController {
 
     const favoriteOffers = await this.offerService.findFromList(user.favorite);
     this.ok(res, fillDTO(OfferRDO, favoriteOffers));
+  }
+
+  public async updateFavorite(
+    { params, body }: UpdateFavoriteRequest,
+    res: Response
+  ): Promise<void> {
+    const { userId } = params;
+    const { offerId, toFavorite } = body;
+
+    const user = await this.userService.findById(userId);
+
+    if (user?.favorite.includes(offerId) && toFavorite) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `Offer with id «${offerId}» already in favorites.`,
+        'UserController'
+      );
+    }
+
+    if (!user?.favorite.includes(offerId) && !toFavorite) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `Offer with id «${offerId}» is not in favorites.`,
+        'UserController'
+      );
+    }
+
+    const updatedUserData = await this.userService.updateFavorites(userId, offerId, toFavorite);
+    this.ok(res, fillDTO(AuthUserRDO, updatedUserData));
   }
 }
