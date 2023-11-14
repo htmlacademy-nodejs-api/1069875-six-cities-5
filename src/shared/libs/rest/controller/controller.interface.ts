@@ -8,7 +8,4 @@ export interface Controller {
   ok<T>(res: Response, data: T): void;
   created<T>(res: Response, data: T): void;
   noContent<T>(res: Response, data: T): void;
-  validationError<T>(res: Response, data: T): void;
-  notAuth<T>(res: Response, data: T): void;
-  forbidden<T>(res: Response, data: T): void;
 }

@@ -3,12 +3,18 @@ import {
   DefaultController,
   HttpError,
   HttpMethod,
+  PrivateRouteMiddleware,
   ValidateDTOMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Response } from 'express';
-import { CommentRDO, CommentService, CreateCommentDTO, CreateCommentRequest } from './index.js';
+import {
+  CommentRDO,
+  CommentService,
+  CreateCommentDTO,
+  CreateCommentRequest,
+} from './index.js';
 import { OfferService } from '../offer/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { fillDTO } from '../../helpers/index.js';
@@ -29,12 +35,15 @@ export class CommentController extends DefaultController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDTOMiddleware(CreateCommentDTO)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDTOMiddleware(CreateCommentDTO),
+      ],
     });
   }
 
   public async create(
-    { body }: CreateCommentRequest,
+    { body, tokenPayload }: CreateCommentRequest,
     res: Response
   ): Promise<void> {
     if (!(await this.offerService.exists(body.offerId))) {
@@ -45,7 +54,10 @@ export class CommentController extends DefaultController {
       );
     }
 
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({
+      ...body,
+      userId: tokenPayload.id,
+    });
     this.created(res, fillDTO(CommentRDO, comment));
   }
 }

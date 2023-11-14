@@ -56,16 +56,4 @@ export abstract class DefaultController implements Controller {
   public noContent<T>(res: Response, data: T): void {
     this.send<T>(res, StatusCodes.NO_CONTENT, data);
   }
-
-  public validationError<T>(res: Response, data: T): void {
-    this.send<T>(res, StatusCodes.BAD_REQUEST, data);
-  }
-
-  public notAuth<T>(res: Response, data: T): void {
-    this.send<T>(res, StatusCodes.UNAUTHORIZED, data);
-  }
-
-  public forbidden<T>(res: Response, data: T): void {
-    this.send<T>(res, StatusCodes.FORBIDDEN, data);
-  }
 }

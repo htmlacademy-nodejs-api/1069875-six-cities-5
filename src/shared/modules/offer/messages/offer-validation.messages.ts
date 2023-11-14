@@ -54,9 +54,6 @@ export const OfferValidationMessage = {
     invalidFormat: 'Field goods must be an array',
     invalidItems: `Goods must be one or few options: ${transformObjectValuesToString(GoodType)}`,
   },
-  hostId: {
-    invalidId: 'HostId field must be a valid id',
-  },
   location: {
     invalidFormat: 'Location must be a valid latitude and longitude',
   },

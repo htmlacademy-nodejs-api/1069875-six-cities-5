@@ -30,6 +30,10 @@ export class DefaultUserService implements UserService {
     return this.userModel.findById(id).exec();
   }
 
+  public async exists(id: string): Promise<boolean> {
+    return (await this.userModel.exists({_id: id})) !== null;
+  }
+
   public async findOrCreate(dto: CreateUserDTO, salt: string): Promise<DocumentType<UserEntity>> {
     const existedUser = await this.findByEmail(dto.email);
 
@@ -38,5 +42,9 @@ export class DefaultUserService implements UserService {
     }
 
     return this.create(dto, salt);
+  }
+
+  public async updateFavorites(userId: string, offerId: string, toAdd: boolean): Promise<DocumentType<UserEntity> | null> {
+    return await this.userModel.findByIdAndUpdate(userId, { [`$${toAdd ? 'push' : 'pull'}`]: { favorite: offerId }}, { new: true }).exec();
   }
 }

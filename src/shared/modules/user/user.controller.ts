@@ -6,6 +6,7 @@ import {
   UploadFileMiddleware,
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
+  PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -18,15 +19,23 @@ import {
   LoginRequest,
   CreateUserDTO,
   LoginDTO,
+  ParamUserId,
+  UpdateFavoriteRequest,
+  FullUserDataRDO,
+  LoggedUserRDO,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
+import { OfferRDO, OfferService } from '../offer/index.js';
+import { AuthService } from '../auth/index.js';
 
 @injectable()
 export class UserController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.AuthService) private readonly authService: AuthService,
+    @inject(Component.OfferService) private readonly offerService: OfferService,
     @inject(Component.Config) private readonly config: Config<RestSchema>
   ) {
     super(logger);
@@ -43,6 +52,7 @@ export class UserController extends DefaultController {
       path: '/login',
       method: HttpMethod.Get,
       handler: this.checkAuth,
+      middlewares: [new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/login',
@@ -62,6 +72,22 @@ export class UserController extends DefaultController {
       middlewares: [
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
+      ],
+    });
+    this.addRoute({
+      path: '/favorite',
+      method: HttpMethod.Get,
+      handler: this.getFavorites,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+      ],
+    });
+    this.addRoute({
+      path: '/favorite',
+      method: HttpMethod.Patch,
+      handler: this.updateFavorite,
+      middlewares: [
+        new PrivateRouteMiddleware(),
       ],
     });
   }
@@ -84,29 +110,32 @@ export class UserController extends DefaultController {
     this.created(res, fillDTO(UserRDO, result));
   }
 
-  public checkAuth(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
-  }
+  public async checkAuth(
+    { tokenPayload: { id } }: Request,
+    res: Response
+  ): Promise<void> {
+    const user = await this.userService.findById(id);
 
-  public async login({ body }: LoginRequest, _res: Response): Promise<void> {
-    const existedUser = await this.userService.findByEmail(body.email);
-
-    if (!existedUser) {
+    if (!user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email «${body.email}» not found.`,
+        'Unauthorized',
         'UserController'
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
+    this.ok(res, fillDTO(FullUserDataRDO, user));
+  }
+
+  public async login({ body }: LoginRequest, res: Response): Promise<void> {
+    const user = await this.authService.verify(body);
+    const token = await this.authService.authenticate(user);
+    this.ok(
+      res,
+      fillDTO(LoggedUserRDO, {
+        email: user.email,
+        token,
+      })
     );
   }
 
@@ -122,5 +151,57 @@ export class UserController extends DefaultController {
     this.created(res, {
       filepath: req.file?.path,
     });
+  }
+
+  public async getFavorites(
+    { tokenPayload }: Request<ParamUserId>,
+    res: Response
+  ): Promise<void> {
+    const userId = tokenPayload.id;
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        `User with id «${userId}» not found.`,
+        'UserController'
+      );
+    }
+
+    const favoriteOffers = await this.offerService.findFromList(user.favorite);
+    this.ok(res, fillDTO(OfferRDO, favoriteOffers));
+  }
+
+  public async updateFavorite(
+    { tokenPayload, body }: UpdateFavoriteRequest,
+    res: Response
+  ): Promise<void> {
+    const userId = tokenPayload.id;
+    const { offerId, toFavorite } = body;
+
+    const user = await this.userService.findById(userId);
+
+    if (user?.favorite.includes(offerId) && toFavorite) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `Offer with id «${offerId}» already in favorites.`,
+        'UserController'
+      );
+    }
+
+    if (!user?.favorite.includes(offerId) && !toFavorite) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `Offer with id «${offerId}» is not in favorites.`,
+        'UserController'
+      );
+    }
+
+    const updatedUserData = await this.userService.updateFavorites(
+      userId,
+      offerId,
+      toFavorite
+    );
+    this.ok(res, fillDTO(FullUserDataRDO, updatedUserData));
   }
 }

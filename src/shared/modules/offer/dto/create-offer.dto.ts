@@ -8,7 +8,6 @@ import {
   IsEnum,
   IsArray,
   IsBoolean,
-  IsMongoId,
   ValidateNested,
   ArrayMinSize,
   ArrayMaxSize,
@@ -75,7 +74,6 @@ export class CreateOfferDTO {
   @IsEnum(GoodType, { each: true, message: OfferValidationMessage.goods.invalidItems })
   public goods: GoodType[];
 
-  @IsMongoId({ message: OfferValidationMessage.hostId.invalidId })
   public hostId: string;
 
   @ValidateNested({ each: true, message: OfferValidationMessage.location.invalidFormat })
