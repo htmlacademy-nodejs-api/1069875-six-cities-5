@@ -10,4 +10,5 @@ export interface OfferService extends DocumentExists {
   updateById(id: string, dto: UpdateOfferDTO): Promise<DocumentType<OfferEntity> | null>;
   deleteById(id: string): Promise<DocumentType<OfferEntity> | null>;
   exists(id: string): Promise<boolean>;
+  findFromList(list: string[]): Promise<DocumentType<OfferEntity>[]>;
 }
