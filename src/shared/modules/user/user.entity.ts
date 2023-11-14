@@ -44,6 +44,12 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   })
   private password?: string;
 
+  @prop({
+    type: () => [String],
+    default: [],
+  })
+  public favorite: string[];
+
   constructor(userData: User) {
     super();
     this.name = userData.name;

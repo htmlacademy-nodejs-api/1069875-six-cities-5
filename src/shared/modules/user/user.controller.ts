@@ -6,6 +6,7 @@ import {
   UploadFileMiddleware,
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
+  DocumentExistsMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -18,15 +19,18 @@ import {
   LoginRequest,
   CreateUserDTO,
   LoginDTO,
+  ParamUserId,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
+import { OfferRDO, OfferService } from '../offer/index.js';
 
 @injectable()
 export class UserController extends DefaultController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.OfferService) private readonly offerService: OfferService,
     @inject(Component.Config) private readonly config: Config<RestSchema>
   ) {
     super(logger);
@@ -62,6 +66,15 @@ export class UserController extends DefaultController {
       middlewares: [
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
+      ],
+    });
+    this.addRoute({
+      path: '/:userId/favorite',
+      method: HttpMethod.Get,
+      handler: this.getFavorites,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
       ],
     });
   }
@@ -122,5 +135,24 @@ export class UserController extends DefaultController {
     this.created(res, {
       filepath: req.file?.path,
     });
+  }
+
+  public async getFavorites(
+    { params }: Request<ParamUserId>,
+    res: Response
+  ): Promise<void> {
+    const { userId } = params;
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        `User with id «${userId}» not found.`,
+        'UserController'
+      );
+    }
+
+    const favoriteOffers = await this.offerService.findFromList(user.favorite);
+    this.ok(res, fillDTO(OfferRDO, favoriteOffers));
   }
 }
