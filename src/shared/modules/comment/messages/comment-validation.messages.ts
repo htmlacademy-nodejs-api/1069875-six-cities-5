@@ -9,9 +9,6 @@ export const CommentValidationMessage = {
     invalidFormat: 'Field bedrooms must be an integer',
     value: `Minimum rating is ${RatingValue.Min}, maximum is  ${RatingValue.Max}`,
   },
-  userId: {
-    invalidId: 'UserId field must be a valid id',
-  },
   offerId: {
     invalidId: 'OfferId field must be a valid id',
   },
