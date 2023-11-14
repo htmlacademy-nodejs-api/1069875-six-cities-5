@@ -3,6 +3,7 @@ import {
   DefaultController,
   DocumentExistsMiddleware,
   HttpMethod,
+  OwnerRouteMiddleware,
   PrivateRouteMiddleware,
   ValidateDTOMiddleware,
   ValidateObjectIdMiddleware,
@@ -68,6 +69,7 @@ export class OfferController extends DefaultController {
         new ValidateObjectIdMiddleware('offerId'),
         new ValidateDTOMiddleware(UpdateOfferDTO),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+        new OwnerRouteMiddleware(this.offerService, 'offerId'),
       ],
     });
     this.addRoute({
@@ -78,6 +80,7 @@ export class OfferController extends DefaultController {
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+        new OwnerRouteMiddleware(this.offerService, 'offerId'),
       ],
     });
     this.addRoute({

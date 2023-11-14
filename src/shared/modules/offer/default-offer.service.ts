@@ -129,6 +129,10 @@ export class DefaultOfferService implements OfferService {
     return (await this.offerModel.exists({_id: id})) !== null;
   }
 
+  public async getOwner(id: string): Promise<string | null> {
+    return await this.offerModel.findById(id).then((offer) => offer?.hostId.toString() || null);
+  }
+
   public async findFromList(list: string[]): Promise<DocumentType<OfferEntity>[]> {
     const idsList = list.map((id) => new Types.ObjectId(id));
     return this.offerModel
