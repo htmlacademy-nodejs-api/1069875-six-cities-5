@@ -8,4 +8,5 @@ export interface UserService extends DocumentExists {
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
   findById(id: string): Promise<DocumentType<UserEntity> | null>;
   exists(id: string): Promise<boolean>;
+  updateFavorites(userId: string, offerId: string, toAdd: boolean): Promise<DocumentType<UserEntity> | null>;
 }

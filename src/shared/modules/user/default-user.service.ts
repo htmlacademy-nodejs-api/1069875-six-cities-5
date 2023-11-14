@@ -43,4 +43,8 @@ export class DefaultUserService implements UserService {
 
     return this.create(dto, salt);
   }
+
+  public async updateFavorites(userId: string, offerId: string, toAdd: boolean): Promise<DocumentType<UserEntity> | null> {
+    return await this.userModel.findByIdAndUpdate(userId, { [`$${toAdd ? 'push' : 'pull'}`]: { favorite: offerId }}, { new: true }).exec();
+  }
 }
