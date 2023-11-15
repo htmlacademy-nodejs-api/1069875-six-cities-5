@@ -14,6 +14,49 @@ npm install
 
 В `package.json` предопределено несколько сценариев.
 
+### Подготовка тестовых данных
+
+#### Запуск cli приложения
+
+```bash
+npm run ts ./src/main.cli.ts
+```
+
+#### Запуск сервера с моками
+
+```bash
+npm run mock:server
+```
+
+#### Генерация тестовых данных
+
+```bash
+npm run ts ./src/main.cli.ts -- --generate <n> ./mocks/test-data.tsv http://localhost:3123/api
+```
+
+#### Запуск контейнера с БД
+
+```bash
+docker compose --file ./docker-compose.dev.yml up -d
+```
+
+#### Импорт тестовых данных в БД
+
+```bash
+npm run ts ./src/main.cli.ts -- --import ./mocks/test-data.tsv bd_user bd_password bd_host bd_name _salt
+```
+Данные с _ соответствуют переменным окружения
+
+### Запуск Rest API в тестовом режиме
+
+Для начала работы создайте файл .env с переменными окружение. Пример представлен в файле .env-example
+
+#### Запуск приложения
+
+```bash
+npm run start:dev
+```
+
 #### Скомпилировать проект
 
 ```bash
