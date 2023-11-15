@@ -5,7 +5,6 @@ import { createSecretKey } from 'node:crypto';
 import { TokenPayload } from '../../../modules/auth/index.js';
 import { HttpError } from '../index.js';
 import { StatusCodes } from 'http-status-codes';
-import { UserStatus } from '../../../types/user-type.enum.js';
 
 function isTokenPayload(payload: unknown): payload is TokenPayload {
   return (
@@ -18,7 +17,7 @@ function isTokenPayload(payload: unknown): payload is TokenPayload {
     'id' in payload &&
     typeof payload.id === 'string' &&
     'status' in payload &&
-    typeof payload.status === typeof UserStatus
+    typeof payload.status === 'string'
   );
 }
 

@@ -4,7 +4,6 @@ import {
   Length,
   Min,
   Max,
-  IsDateString,
   IsEnum,
   IsArray,
   IsBoolean,
@@ -33,9 +32,6 @@ export class CreateOfferDTO {
   @IsString({ message: OfferValidationMessage.description.invalidFormat })
   @Length(DescriptionLength.Min, DescriptionLength.Max, { message: OfferValidationMessage.description.length })
   public description: string;
-
-  @IsDateString({}, { message: OfferValidationMessage.date.invalidFormat })
-  public date: Date;
 
   @IsEnum(City, { message: OfferValidationMessage.city.invalid })
   public city: City;

@@ -18,9 +18,6 @@ export const OfferValidationMessage = {
     invalidFormat: 'Field image must be a string',
     length: `Description length min is ${DescriptionLength.Min}, max is ${DescriptionLength.Max}`,
   },
-  date: {
-    invalidFormat: 'Date must be a valid ISO date',
-  },
   city: {
     invalid: `Type must be from options: ${transformObjectValuesToString(City)}`,
   },
