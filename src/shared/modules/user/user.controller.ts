@@ -61,7 +61,7 @@ export class UserController extends DefaultController {
     });
     this.addRoute({
       path: '/avatar',
-      method: HttpMethod.Post,
+      method: HttpMethod.Patch,
       handler: this.uploadAvatar,
       middlewares: [
         new PrivateRouteMiddleware(),
