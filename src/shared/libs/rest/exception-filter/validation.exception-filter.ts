@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ExceptionFilter } from './exception-filter.interface.js';
 import { Component } from '../../../types/index.js';
 import { Logger } from '../../logger/index.js';
@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError, ValidationError } from '../index.js';
 import { createErrorObject } from '../../../helpers/index.js';
 
+@injectable()
 export class ValidationExceptionFilter implements ExceptionFilter {
   constructor(@inject(Component.Logger) private readonly logger: Logger) {
     this.logger.info('Register ValidationExceptionFilter');
