@@ -1,6 +1,6 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ValidationError } from 'class-validator';
-import { ValidationErrorField } from '../libs/rest/index.js';
+import { AppError, ValidationErrorField } from '../libs/rest/index.js';
 
 export function generateRandomValue(
   min: number,
@@ -31,9 +31,11 @@ export function fillDTO<T, V>(someDTO: ClassConstructor<T>, plainObject: V) {
   });
 }
 
-export function createErrorObject(message: string) {
+export function createErrorObject(type: AppError, message: string, details: ValidationErrorField[] = []) {
   return {
+    type,
     message,
+    details,
   };
 }
 
