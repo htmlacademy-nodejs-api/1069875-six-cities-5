@@ -15,10 +15,10 @@ Content-Type: application/json
 
 POST http://localhost:4000/offers HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNhbUBwb3N0LmdvIiwibmFtZSI6IlNhbSIsImlkIjoiNjU1NTIzMWU5MmI0NDY5ZWU4NjQwNWQ3Iiwic3RhdHVzIjoicmVndWxhciIsImlhdCI6MTcwMDA3ODM4MiwiZXhwIjoxNzAwMjUxMTgyfQ.rVnGHvkyAVJEobCF0Yh-l1ALWsSPIYjdizxVGl6o-1U
 
 {
   "title": "Nice house",
-  "date": "2024-01-01T12:00:00.000Z",
   "city": "Paris",
   "previewImage": "https://url-to-image/image.jpeg",
   "isPremium": false,

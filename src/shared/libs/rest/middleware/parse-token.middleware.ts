@@ -16,8 +16,8 @@ function isTokenPayload(payload: unknown): payload is TokenPayload {
     typeof payload.name === 'string' &&
     'id' in payload &&
     typeof payload.id === 'string' &&
-    'isPro' in payload &&
-    typeof payload.isPro === 'boolean'
+    'status' in payload &&
+    typeof payload.status === 'string'
   );
 }
 

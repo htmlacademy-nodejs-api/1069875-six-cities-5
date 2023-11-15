@@ -10,3 +10,4 @@ export * from './comment.type.js';
 export * from './sort-type.enum.js';
 export * from './document-exists.interface.js';
 export * from './has-owner.interface.js';
+export * from './user-type.enum.js';

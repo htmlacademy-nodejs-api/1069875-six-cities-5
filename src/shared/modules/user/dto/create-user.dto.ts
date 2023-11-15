@@ -1,11 +1,12 @@
 import {
   IsString,
   Length,
-  IsBoolean,
   IsEmail,
+  IsEnum,
 } from 'class-validator';
 import { UserValidationMessage } from '../index.js';
 import { UserNameLength, UserPasswordLength } from '../../../const/index.js';
+import { UserStatus } from '../../../types/index.js';
 
 export class CreateUserDTO {
   @IsString({ message: UserValidationMessage.name.invalidFormat })
@@ -17,8 +18,8 @@ export class CreateUserDTO {
   @IsEmail({}, { message: UserValidationMessage.email.invalidFormat })
   public email: string;
 
-  @IsBoolean({ message: UserValidationMessage.isPro.invalidFormat })
-  public isPro: boolean;
+  @IsEnum(UserStatus, { message: UserValidationMessage.status.invalidFormat })
+  public status: UserStatus;
 
   @IsString({ message: UserValidationMessage.password.invalidFormat })
   @Length(UserPasswordLength.Min, UserPasswordLength.Max, {

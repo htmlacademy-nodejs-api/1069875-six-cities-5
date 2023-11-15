@@ -34,7 +34,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     require: true,
     default: new Date(),
   })
-  public date!: Date;
+  public date?: Date;
 
   @prop({
     type: () => String,

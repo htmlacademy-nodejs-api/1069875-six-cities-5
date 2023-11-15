@@ -66,8 +66,8 @@ export class TSVOfferGenerator implements OfferGenerator {
 
     const name = getRandomItem(this.mockData.names);
     const email = getRandomItem(this.mockData.emails);
-    const isPro = generateRandomValue(0, 1);
-    const host = [name, email, isPro];
+    const status = getRandomItem(this.mockData.statuses);
+    const host = [name, email, status];
 
     return [
       title,

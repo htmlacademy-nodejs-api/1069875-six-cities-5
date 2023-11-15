@@ -1,4 +1,4 @@
-import { City, GoodType, Offer, OfferType } from '../types/index.js';
+import { City, GoodType, Offer, OfferType, UserStatus } from '../types/index.js';
 
 export function createOffer(line: string): Offer {
   const [
@@ -19,7 +19,8 @@ export function createOffer(line: string): Offer {
   ] = line.replace('\n', '').split('\t');
 
   const [latitude, longitude] = location.split(';');
-  const [name, email, isPro] = host.split(';');
+  const [name, email, userStatus] = host.split(';');
+  const status = userStatus as UserStatus;
 
   return {
     title,
@@ -34,7 +35,7 @@ export function createOffer(line: string): Offer {
     maxGuests: Number.parseInt(maxGuests, 10),
     price: Number.parseInt(price, 10),
     goods: goods.split(';').map((good) => good as GoodType),
-    host: { name, email, isPro: Boolean(Number.parseInt(isPro, 10)) },
+    host: { name, email, status },
     location: {
       latitude: Number.parseFloat(latitude),
       longitude: Number.parseFloat(longitude),
