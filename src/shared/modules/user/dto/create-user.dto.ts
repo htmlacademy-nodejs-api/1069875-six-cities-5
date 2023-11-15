@@ -1,5 +1,4 @@
 import {
-  IsOptional,
   IsString,
   Length,
   IsBoolean,
@@ -17,10 +16,6 @@ export class CreateUserDTO {
 
   @IsEmail({}, { message: UserValidationMessage.email.invalidFormat })
   public email: string;
-
-  @IsOptional()
-  @IsString({ message: UserValidationMessage.avatarUrl.invalidFormat })
-  public avatarUrl?: string;
 
   @IsBoolean({ message: UserValidationMessage.isPro.invalidFormat })
   public isPro: boolean;

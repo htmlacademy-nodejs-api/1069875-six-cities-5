@@ -12,9 +12,6 @@ export const UserValidationMessage = {
   email: {
     invalidFormat: 'Email must be a valid address',
   },
-  avatarUrl: {
-    invalidFormat: 'Field avatar must be a string',
-  },
   isPro: {
     invalidFormat: 'Field isPro must be a boolean type',
   },
