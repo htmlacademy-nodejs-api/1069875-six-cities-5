@@ -1,5 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
-import { CreateUserDTO, UserEntity } from './index.js';
+import { CreateUserDTO, UpdateUserDto, UserEntity } from './index.js';
 import { DocumentExists } from '../../types/index.js';
 
 export interface UserService extends DocumentExists {
@@ -9,4 +9,5 @@ export interface UserService extends DocumentExists {
   findById(id: string): Promise<DocumentType<UserEntity> | null>;
   exists(id: string): Promise<boolean>;
   updateFavorites(userId: string, offerId: string, toAdd: boolean): Promise<DocumentType<UserEntity> | null>;
+  updateById(userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
 }

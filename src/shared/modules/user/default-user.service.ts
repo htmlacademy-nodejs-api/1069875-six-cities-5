@@ -1,5 +1,5 @@
 import { DocumentType, types } from '@typegoose/typegoose';
-import { CreateUserDTO, DEFAULT_AVATAR_FILE_NAME } from './index.js';
+import { CreateUserDTO, DEFAULT_AVATAR_FILE_NAME, UpdateUserDto } from './index.js';
 import { UserService } from './user-service.interface.js';
 import { UserEntity } from './user.entity.js';
 import { injectable, inject } from 'inversify';
@@ -46,5 +46,11 @@ export class DefaultUserService implements UserService {
 
   public async updateFavorites(userId: string, offerId: string, toAdd: boolean): Promise<DocumentType<UserEntity> | null> {
     return await this.userModel.findByIdAndUpdate(userId, { [`$${toAdd ? 'push' : 'pull'}`]: { favorite: offerId }}, { new: true }).exec();
+  }
+
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, { new: true })
+      .exec();
   }
 }
