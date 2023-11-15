@@ -7,7 +7,6 @@ Content-Type: application/json
 {
   "name": "Sam",
   "email": "sam@post.go",
-  "avatarUrl": "https://url-to-image/image.jpeg",
   "status": "regular",
   "password": "qwerty123"
 }
