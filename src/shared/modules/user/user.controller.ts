@@ -21,7 +21,6 @@ import {
   LoginDTO,
   ParamUserId,
   UpdateFavoriteRequest,
-  FullUserDataRDO,
   LoggedUserRDO,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
@@ -78,17 +77,13 @@ export class UserController extends DefaultController {
       path: '/favorite',
       method: HttpMethod.Get,
       handler: this.getFavorites,
-      middlewares: [
-        new PrivateRouteMiddleware(),
-      ],
+      middlewares: [new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/favorite',
       method: HttpMethod.Patch,
       handler: this.updateFavorite,
-      middlewares: [
-        new PrivateRouteMiddleware(),
-      ],
+      middlewares: [new PrivateRouteMiddleware()],
     });
   }
 
@@ -124,19 +119,15 @@ export class UserController extends DefaultController {
       );
     }
 
-    this.ok(res, fillDTO(FullUserDataRDO, user));
+    this.ok(res, fillDTO(LoggedUserRDO, user));
   }
 
   public async login({ body }: LoginRequest, res: Response): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    this.ok(
-      res,
-      fillDTO(LoggedUserRDO, {
-        email: user.email,
-        token,
-      })
-    );
+
+    const responseData = fillDTO(LoggedUserRDO, user);
+    this.ok(res, Object.assign(responseData, { token }));
   }
 
   public logout(_req: Request, _res: Response): void {
@@ -202,6 +193,6 @@ export class UserController extends DefaultController {
       offerId,
       toFavorite
     );
-    this.ok(res, fillDTO(FullUserDataRDO, updatedUserData));
+    this.ok(res, fillDTO(LoggedUserRDO, updatedUserData));
   }
 }
