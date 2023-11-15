@@ -71,10 +71,10 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async findPremium(): Promise<DocumentType<OfferEntity>[]> {
+  public async findPremium(city: string): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
       .aggregate([
-        { $match: { isPremium: true } },
+        { $match: { isPremium: true, city } },
         { $sort: { date: SortType.Down } },
         { $limit: PREMIUM_OFFERS_NUMBER },
         {

@@ -1,6 +1,7 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ValidationError } from 'class-validator';
 import { AppError, ValidationErrorField } from '../libs/rest/index.js';
+import { City } from '../types/city.enum.js';
 
 export function generateRandomValue(
   min: number,
@@ -55,4 +56,10 @@ export function reduceValidationErrors(
 
 export function getFullServerPath(host: string, port: number) {
   return `http://${host}:${port}`;
+}
+
+export function validateCityName(city: string) {
+  const cities = Object.values(City).map((item) => item.toString());
+
+  return cities.includes(city);
 }

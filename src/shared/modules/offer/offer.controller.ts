@@ -2,6 +2,7 @@ import { inject } from 'inversify';
 import {
   DefaultController,
   DocumentExistsMiddleware,
+  HttpError,
   HttpMethod,
   OwnerRouteMiddleware,
   PrivateRouteMiddleware,
@@ -22,12 +23,14 @@ import {
   CreateOfferDTO,
   UpdateOfferDTO,
   OfferEntity,
+  ParamCity,
 } from './index.js';
-import { fillDTO } from '../../helpers/common.js';
+import { fillDTO, validateCityName } from '../../helpers/common.js';
 import { CommentRDO, CommentService } from '../comment/index.js';
 import { UserService } from '../user/index.js';
 import { DocumentType } from '@typegoose/typegoose';
 import { TokenPayload } from '../auth/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 export class OfferController extends DefaultController {
   constructor(
@@ -52,7 +55,7 @@ export class OfferController extends DefaultController {
       ],
     });
     this.addRoute({
-      path: '/premium',
+      path: '/premium/:city',
       method: HttpMethod.Get,
       handler: this.indexPremium,
     });
@@ -139,10 +142,18 @@ export class OfferController extends DefaultController {
   }
 
   public async indexPremium(
-    { tokenPayload }: Request,
+    { params, tokenPayload }: Request<ParamCity>,
     res: Response
   ): Promise<void> {
-    const offers = await this.offerService.findPremium();
+    const city = params.city;
+
+    if (!validateCityName(city)) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Не валидное наименование города'
+      );
+    }
+    const offers = await this.offerService.findPremium(city);
     const responseData = fillDTO(
       OfferRDO,
       await this.addFavoriteFlags(tokenPayload, offers)
