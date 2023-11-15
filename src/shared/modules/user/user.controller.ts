@@ -60,11 +60,6 @@ export class UserController extends DefaultController {
       middlewares: [new ValidateDTOMiddleware(LoginDTO)],
     });
     this.addRoute({
-      path: '/logout',
-      method: HttpMethod.Delete,
-      handler: this.logout,
-    });
-    this.addRoute({
       path: '/avatar',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
@@ -128,14 +123,6 @@ export class UserController extends DefaultController {
 
     const responseData = fillDTO(LoggedUserRDO, user);
     this.ok(res, Object.assign(responseData, { token }));
-  }
-
-  public logout(_req: Request, _res: Response): void {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
   }
 
   public async uploadAvatar(
