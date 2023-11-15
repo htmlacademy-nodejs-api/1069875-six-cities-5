@@ -59,6 +59,7 @@
       "author@mir.local",
       "test@lost.loca",
       "kujo-fan@story.local"
-    ]
+    ],
+    "statuses": ["pro", "regular"]
   }
 }

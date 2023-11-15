@@ -41,7 +41,7 @@ export class DefaultAuthService implements AuthService {
       email: user.email,
       name: user.name,
       id: user.id,
-      isPro: user.isPro,
+      status: user.status,
     };
 
     this.logger.info(`Create token for ${user.email}`);

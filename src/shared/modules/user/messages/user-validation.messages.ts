@@ -1,4 +1,6 @@
 import { UserNameLength, UserPasswordLength } from '../../../const/index.js';
+import { transformObjectValuesToString } from '../../../helpers/common.js';
+import { UserStatus } from '../../../types/index.js';
 
 export const UserValidationMessage = {
   name: {
@@ -12,7 +14,7 @@ export const UserValidationMessage = {
   email: {
     invalidFormat: 'Email must be a valid address',
   },
-  isPro: {
-    invalidFormat: 'Field isPro must be a boolean type',
+  status: {
+    invalidFormat: `Status must be from options: ${transformObjectValuesToString(UserStatus)}`,
   },
 } as const;

@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { UserStatus } from '../../../types/index.js';
 
 export class UserRDO {
   @Expose()
@@ -11,5 +12,5 @@ export class UserRDO {
   public avatarUrl: string;
 
   @Expose()
-  public isPro: boolean;
+  public status: UserStatus;
 }
