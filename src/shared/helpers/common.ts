@@ -59,7 +59,7 @@ export function getFullServerPath(host: string, port: number) {
 }
 
 export function validateCityName(city: string) {
-  const cities = Object.values(City).map((item) => item.toString());
+  const cities = Object.values(City).map((item) => item.toString().toLowerCase());
 
-  return cities.includes(city);
+  return cities.includes(city.toLowerCase());
 }
