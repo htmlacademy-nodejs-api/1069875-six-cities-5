@@ -9,18 +9,12 @@ import dayjs from 'dayjs';
 import {
   GuestsNumber,
   PriceValue,
-  RatingValue,
   RoomsNumber,
 } from '../../const/index.js';
 
 enum DateDiffNumber {
   Min = 1,
   Max = 10,
-}
-
-enum CommentsNumber {
-  Min = 0,
-  Max = 100,
 }
 
 enum LatitudeNumber {
@@ -51,17 +45,12 @@ export class TSVOfferGenerator implements OfferGenerator {
     const images = getRandomItems(this.mockData.images);
     const previewImage = getRandomItem(images);
     const isPremium = generateRandomValue(0, 1);
-    const isFavorite = generateRandomValue(0, 1);
-    const rating = generateRandomValue(RatingValue.Min, RatingValue.Max);
     const type = getRandomItem(this.mockData.types);
     const bedrooms = generateRandomValue(RoomsNumber.Min, RoomsNumber.Max);
     const guests = generateRandomValue(GuestsNumber.Min, GuestsNumber.Max);
     const price = generateRandomValue(PriceValue.Min, PriceValue.Max);
     const goods = getRandomItems(this.mockData.goods);
-    const comments = generateRandomValue(
-      CommentsNumber.Min,
-      CommentsNumber.Max
-    );
+
     const location = [
       generateRandomValue(
         LatitudeNumber.Min,
@@ -77,9 +66,8 @@ export class TSVOfferGenerator implements OfferGenerator {
 
     const name = getRandomItem(this.mockData.names);
     const email = getRandomItem(this.mockData.emails);
-    const avatar = getRandomItem(this.mockData.avatars);
     const isPro = generateRandomValue(0, 1);
-    const host = [name, email, avatar, isPro];
+    const host = [name, email, isPro];
 
     return [
       title,
@@ -89,15 +77,12 @@ export class TSVOfferGenerator implements OfferGenerator {
       previewImage,
       images.join(';'),
       isPremium,
-      isFavorite,
-      rating,
       type,
       bedrooms,
       guests,
       price,
       goods.join(';'),
       host.join(';'),
-      comments,
       location.join(';'),
     ].join('\t');
   }

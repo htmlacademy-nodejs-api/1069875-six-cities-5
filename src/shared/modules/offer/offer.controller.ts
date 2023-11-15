@@ -158,7 +158,6 @@ export class OfferController extends DefaultController {
       OfferRDO,
       await this.addFavoriteFlags(tokenPayload, offers)
     );
-    console.log(responseData);
     this.ok(res, responseData);
   }
 
