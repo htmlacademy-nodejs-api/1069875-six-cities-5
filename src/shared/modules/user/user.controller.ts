@@ -5,7 +5,6 @@ import {
   HttpMethod,
   UploadFileMiddleware,
   ValidateDTOMiddleware,
-  ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
@@ -22,6 +21,7 @@ import {
   ParamUserId,
   UpdateFavoriteRequest,
   LoggedUserRDO,
+  UploadAvatarRDO,
 } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -65,11 +65,11 @@ export class UserController extends DefaultController {
       handler: this.logout,
     });
     this.addRoute({
-      path: '/:userId/avatar',
+      path: '/avatar',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
-        new ValidateObjectIdMiddleware('userId'),
+        new PrivateRouteMiddleware(),
         new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
       ],
     });
@@ -138,10 +138,19 @@ export class UserController extends DefaultController {
     );
   }
 
-  public async uploadAvatar(req: Request, res: Response): Promise<void> {
-    this.created(res, {
-      filepath: req.file?.path,
-    });
+  public async uploadAvatar(
+    { file, tokenPayload }: Request,
+    res: Response
+  ): Promise<void> {
+    const userId = tokenPayload.id;
+    const uploadFile = { avatarUrl: file?.filename };
+    await this.userService.updateById(userId, uploadFile);
+    this.created(
+      res,
+      fillDTO(UploadAvatarRDO, {
+        filepath: uploadFile.avatarUrl,
+      })
+    );
   }
 
   public async getFavorites(
