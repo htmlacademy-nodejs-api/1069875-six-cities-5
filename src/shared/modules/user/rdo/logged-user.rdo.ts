@@ -6,4 +6,16 @@ export class LoggedUserRDO {
 
   @Expose()
   public token: string;
+
+  @Expose()
+  public name: string;
+
+  @Expose()
+  public avatarUrl: string;
+
+  @Expose()
+  public isPro: boolean;
+
+  @Expose()
+  public favorite: string[];
 }

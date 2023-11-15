@@ -40,7 +40,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/offer'
+                  $ref: '#/components/schemas/getOffer'
     post:
       tags:
         - offers
@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getOffer'
+                $ref: '#/components/schemas/getFullOffer'
         "400":
           description: Ошибка валидации
           content:
@@ -77,20 +77,12 @@ paths:
                 example: Для создания нового предложения - войдите в систему
 
 
-  /offers/premium:
+  /offers/premium/{city}:
     get:
       tags:
         - offers
       summary: Список премиальных предложений
       description: Возвращает список премиальных предложений
-
-      parameters:
-        - name: city
-          description: Город
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/city'
 
       responses:
         "200":
@@ -100,7 +92,14 @@ paths:
                 schema:
                   type: array
                   items:
-                    $ref: '#/components/schemas/offer'
+                    $ref: '#/components/schemas/getOffer'
+        "400":
+            description: Ошибка запроса
+            content:
+              application/json:
+                schema:
+                  type: string
+                  example: Не валидное наименование города
 
 
   /offers/{offerId}:
@@ -116,7 +115,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getOffer'
+                $ref: '#/components/schemas/getFullOffer'
         "404":
           description: Предложение отсутствует
           content:
@@ -136,13 +135,7 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/createOffer'
-                - type: object
-                  properties:
-                    offerId:
-                      type: string
-                      example: 6329c3d6a04ab1061c6425ea
+              $ref: '#/components/schemas/fullOffer'
 
       responses:
         "200":
@@ -150,7 +143,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getOffer'
+                $ref: '#/components/schemas/getFullOffer'
         "400":
           description: Ошибка валидации
           content:
@@ -293,7 +286,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/authUser'
+                $ref: '#/components/schemas/getAuthUser'
         "400":
           description: Ошибка валидации
           content:
@@ -324,22 +317,13 @@ paths:
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
 
-      parameters:
-        - name: token
-          description: Токен аутентификации
-          in: query
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
-
       responses:
         "201":
           description: Успешный вход в систему. Объект пользователя
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/authUser'
+                $ref: '#/components/schemas/getAuthUser'
         "400":
           description: Пользователь не авторизован
           content:
@@ -368,7 +352,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/authUser'
+                $ref: '#/components/schemas/getAuthUser'
         "403":
           description: Ошибка авторизации
           content:
@@ -383,39 +367,92 @@ paths:
               schema:
                 type: string
                 example: Пользователь с таким email не существует
-
-
-  /users/logout:
-    delete:
+  /users/avatar:
+    patch:
       tags:
         - users
-      summary: Завершение сеанса пользователя
-      description: Выход из закрытой части приложения
-
-      parameters:
-        - name: token
-          description: Токен аутентификации
-          in: query
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+      summary: Обновление аватарки пользователя
+      description: Возвращает информацию по авторизованному пользователю
 
       responses:
-        "201":
-          description: Успешный выход из системы
+        "200":
+          description: Успешное обновление аватара. Ссылка на аватар
           content:
             application/json:
               schema:
-                type: string
-                example: Успешный выход из системы
+                type: object
+                properties:
+                  filepath:
+                   type: string
+                   example: e92bd491-b495-4dba-be2d-6e200e615cb1.png
         "400":
-          description: Ошибка запроса
+          description: Пользователь не авторизован
           content:
             application/json:
               schema:
                 type: string
-                example: Ошибка запроса
+                example: Пользователь не авторизован
+
+  /users/favorite:
+    get:
+      tags:
+        - offers
+      summary: Список избранных предложений
+      description: Возвращает список избранных предложений пользователя
+
+      responses:
+        "200":
+          description: Список избранных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/getOffer'
+        "400":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь не авторизован
+
+    patch:
+      tags:
+        - offers
+      summary: Список избранных предложений
+      description: Возвращает список избранных предложений пользователя
+
+      requestBody:
+        description: Обьект с id предложения и флагом добавления/удаления
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateFavorite'
+
+      responses:
+        "200":
+          description: Список избранных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/getAuthUser'
+        "400":
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Пользователь не авторизован
+        "500":
+          description: Ошибка добавления в избранное
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Предложение уже в избранном
 
 
 components:
@@ -438,13 +475,6 @@ components:
         isPremium:
           type: boolean
           example: false
-        isFavorite:
-          type: boolean
-          example: false
-        rating:
-          type: number
-          format: float
-          example: 4.5
         type:
           type: string
           example: house
@@ -457,10 +487,6 @@ components:
           type: integer
           format: int32
           example: 1000
-        commentsNumber:
-          type: integer
-          format: int32
-          example: 12
     fullOffer:
       allOf:
         - $ref: '#/components/schemas/offer'
@@ -497,13 +523,42 @@ components:
                   - Fridge
             location:
               $ref: '#/components/schemas/location'
+    calculatedFields:
+      type: object
+      properties:
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          format: float
+          example: 4.5
+        commentsNumber:
+          type: integer
+          format: int32
+          example: 12
     getOffer:
       allOf:
-        - $ref: '#/components/schemas/fullOffer'
+        - $ref: '#/components/schemas/offer'
+        - $ref: '#/components/schemas/calculatedFields'
         - type: object
           properties:
             host:
-              $ref: '#/components/schemas/user'
+              $ref: '#/components/schemas/getUser'
+            id:
+              type: string
+              example: 6532864f0fe8c4629c06f8ed
+    getFullOffer:
+      allOf:
+        - $ref: '#/components/schemas/fullOffer'
+        - $ref: '#/components/schemas/calculatedFields'
+        - type: object
+          properties:
+            host:
+              $ref: '#/components/schemas/getUser'
+            id:
+              type: string
+              example: 6532864f0fe8c4629c06f8ed
     createOffer:
       allOf:
         - $ref: '#/components/schemas/fullOffer'
@@ -533,9 +588,6 @@ components:
           type: string
           format: email
           example: tomas@post.go
-        avatarUrl:
-          type: string
-          example: https://url-to-image/image.jpeg
         isPro:
           type: boolean
           example: false
@@ -547,14 +599,27 @@ components:
             password:
               type: string
               example: qwerty123
-    authUser:
+    getUser:
       allOf:
         - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            avatarUrl:
+              type: string
+              example: https://url-to-image/image.jpeg
+    getAuthUser:
+      allOf:
+        - $ref: '#/components/schemas/getUser'
         - type: object
           properties:
             token:
               type: string
               example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+            favorite:
+              type: array
+              items:
+                type: string
+                example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
     loginData:
       type: object
       properties:
@@ -564,6 +629,15 @@ components:
         password:
           type: string
           example: qwerty123
+    updateUserData:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+          example: https://url-to-image/image.jpeg
+        name:
+          type: string
+          example: Maria
     city:
       type: string
       example: Paris
@@ -602,3 +676,12 @@ components:
             userId:
               type: string
               example: 6329c3d6a04ab1061c6425ea
+    updateFavorite:
+      type: object
+      properties:
+        offerId:
+          type: string
+          example: 6329c3d6a04ab1061c6425ea
+        toFavorite:
+          type: boolean
+          example: true
